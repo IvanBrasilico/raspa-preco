@@ -3,22 +3,33 @@ import re
 from setuptools import find_packages, setup
 import os
 
+with open('README.md', 'r') as f:
+    LONG_DESCRIPTION = f.read()
+
 setup(
-    name='binput',
-    description='A Input Command for Bottery',
+    name='raspapreco',
+    description='Pesquisador de preços',
+    long_description = LONG_DESCRIPTION,
     version='0.0.1',
-    url='https://github.com/IvanBrasilico',
+    url='https://github.com/IvanBrasilico/raspa-preco',
     license='MIT',
     author='Ivan Brasilico',
     author_email='brasilico.ivan@gmail.com',
     packages=find_packages(),
     install_requires=[
+        'bs4',
+        'certifi',
+        'chardet',
+        'idna',
+        'requests',
+        'SQLAlchemy',
+        'urllib3'
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     test_suite="tests",
     package_data={
-        'botteryext/binput': ['/locale/*'],
+        'raspapreco': ['locale/*'],
     },
     extras_require={
         'dev': [
@@ -35,7 +46,7 @@ setup(
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Operating System :: POSIX',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: MacOS :: MacOS X',

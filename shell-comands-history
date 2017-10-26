@@ -1,0 +1,54 @@
+# Para Iniciar um projeto no GitHub
+
+*** Criar o projeto no site GitHub
+cd <sua pasta raiz de projetos>
+git clone https://github.com/IvanBrasilico/raspa-preco.git raspapreco
+
+
+# Criar estrutura python padrão
+
+mkdir raspa-preco/raspa-preco
+cd raspa-preco
+mkdir tests
+mkdir models
+mkdir locale
+
+# Aproveitar a configuração de outros projetos 
+cd (...) # ir ao diretório mais conveniente para copiar do projeto anterior
+cp ext/binput/setup.py raspa-preco/
+cp ext/binput/travis.yml raspa-preco/.travis.yml
+cp ext/binput/tox.ini raspa-preco/
+cp ext/binput/pylintrc raspa-preco/
+cp ext/binput/pytest.ini raspa-preco/
+cp ext/binput/generatepot.sh raspa-preco/
+cp /ext/binput/.gitignore .
+ls -la
+git status
+git add -A
+git status
+git commit -m "preparo do ambiente de testes e do git"
+git push
+
+** Fazer mudanças necessárias nos arquivos setup.ini, tox.ini, generatepot.sh 
+
+# Criar ambiente virtual para não bagunçar o sistema
+
+python -m virtualenv venv
+. venv/bin/activate
+pip install SQLAlchemy requests BeautifulSoup
+
+# Para guardar e atualizar as dependências
+
+pip freeze >> requirements.txt
+history >> shell-comands-history
+
+## Se o repositório já existir...
+# Install 
+git clone https://github.com/IvanBrasilico/raspa-preco.git raspapreco
+cd raspapreco
+python -m virtualenv venv
+. venv/bin/activate
+pip install -r requirements.txt
+pip install -e . # IMPORTANTE para setar . como PYTHONPATH
+
+## Não esquecer de ir ao Travis adicionar o repositório e pegar o badge para o README após ter alguns testes rodando
