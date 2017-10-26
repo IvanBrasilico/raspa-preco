@@ -9,10 +9,6 @@ path = os.path.dirname(os.path.abspath(__file__))
 engine = create_engine('sqlite:////' + path + '/raspa.db')
 Base = declarative_base()
 
-if __name__ == '__main__':
-    Base.metadata.create_all(engine)
-
-
 produto_procedimento = Table('produto_procedimento', Base.metadata,
                              Column('left_id', Integer,
                                     ForeignKey('procedimentos.id')),
@@ -59,3 +55,7 @@ class Site(Base):
     def __init__(self, title, url):
         self.title = title
         self.url = url
+
+
+if __name__ == '__main__':
+    Base.metadata.create_all(engine)

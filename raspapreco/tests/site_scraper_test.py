@@ -32,7 +32,7 @@ class TestModel(unittest.TestCase):
         self.assertRaises(AttributeError, scrap.scrap)
         scrap = Scraper(sites, produtos)
         self.assertRaises(KeyError, scrap.scrap)
-        site.title = 'alibaba'
+        site.title = 'aliexpress'
         scrap = Scraper(sites, produtos)
         scrap.scrap()
         assert scrap.scraped.get(produto.descricao) is not None

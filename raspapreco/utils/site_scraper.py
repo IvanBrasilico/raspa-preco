@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import raspapreco.localizations
 
 SCRAPY_DICT = \
-    {'alibaba': {'url': 'https://pt.aliexpress.com/wholesale',
+    {'aliexpress': {'url': 'https://pt.aliexpress.com/wholesale',
                  'param_names': {'categoria': 'catId', 'descricao': 'SearchText'},
                  'xpath': None,
                  'target': ('span', {'class': 'value', 'itemprop': 'price'})
