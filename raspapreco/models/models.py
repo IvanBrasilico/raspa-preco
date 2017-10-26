@@ -1,10 +1,9 @@
 import os
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, Table, String
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship, sessionmaker
 
+from sqlalchemy import (Column, ForeignKey, Integer, String, Table,
+                        create_engine)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker
 
 path = os.path.dirname(os.path.abspath(__file__))
 engine = create_engine('sqlite:////' + path + '/raspa.db')
@@ -14,7 +13,7 @@ if __name__ == '__main__':
     Base.metadata.create_all(engine)
 
 
-produto_procedimento = Table('association', Base.metadata,
+produto_procedimento = Table('produto_procedimento', Base.metadata,
                              Column('left_id', Integer,
                                     ForeignKey('procedimentos.id')),
                              Column('right_id', Integer,

@@ -1,7 +1,8 @@
 import ast
-import re
-from setuptools import find_packages, setup
 import os
+import re
+
+from setuptools import find_packages, setup
 
 with open('README.md', 'r') as f:
     LONG_DESCRIPTION = f.read()
@@ -39,6 +40,7 @@ setup(
             'pytest',
             'pytest-cov',
             'pytest-mock',
+            'requests-mock',
             'sphinx',
             'testfixtures',
         ],
