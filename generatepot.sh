@@ -1,0 +1,1 @@
+python /usr/share/doc/python3.6/examples/i18n/pygettext.py -d binput __init__.py inputapp.py patterns.py settings.py setup.py views.py bottery/ext/binput/inputhandler.py bottery/ext/binput/localizations.py bottery/ext/binput/patterns.py
