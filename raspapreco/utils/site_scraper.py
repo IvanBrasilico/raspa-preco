@@ -19,7 +19,7 @@ SCRAPY_DICT = \
 
 
 class Scraper:
-    '''Receives sites and produtos, call necessary functions, 
+    '''Receives sites and produtos, call necessary functions,
     do error management and store resuls'''
 
     def __init__(self, sites=None, produtos=None):
