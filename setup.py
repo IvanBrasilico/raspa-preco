@@ -4,13 +4,17 @@ import re
 
 from setuptools import find_packages, setup
 
-with open('./README.md', 'r') as f:
-    LONG_DESCRIPTION = f.read()
+LONG_DESCRIPTION = ''
+try:
+    with open('./README.md', 'r') as f:
+        LONG_DESCRIPTION = f.read()
+except FileNotFoundError:
+    pass
 
 setup(
     name='raspapreco',
     description='Pesquisador de preços',
-    long_description = LONG_DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
     version='0.0.1',
     url='https://github.com/IvanBrasilico/raspa-preco',
     license='MIT',

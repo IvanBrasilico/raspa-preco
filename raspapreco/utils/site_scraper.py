@@ -7,10 +7,10 @@ import raspapreco.localizations
 
 SCRAPY_DICT = \
     {'aliexpress': {'url': 'https://pt.aliexpress.com/wholesale',
-                 'param_names': {'categoria': 'catId', 'descricao': 'SearchText'},
-                 'xpath': None,
-                 'target': ('span', {'class': 'value', 'itemprop': 'price'})
-                 },
+                    'param_names': {'categoria': 'catId', 'descricao': 'SearchText'},
+                    'xpath': None,
+                    'target': ('span', {'class': 'value', 'itemprop': 'price'})
+                    },
      'other': {'url': 'https://',
                'xpath': 'XPATH',  # or
                'target': ('a', {'class': 'xxx', 'id': 'xxx', '...': 'xxx'})

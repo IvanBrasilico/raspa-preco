@@ -22,4 +22,3 @@ scrap = Scraper([ali], [bolsa])
 scrap.scrap()
 
 print(scrap.scraped)
-
