@@ -14,7 +14,14 @@ produto_procedimento = Table('produto_procedimento', Base.metadata,
                                     ForeignKey('procedimentos.id')),
                              Column('right_id', Integer,
                                     ForeignKey('produtos.id'))
-                             )
+                            )
+
+site_procedimento = Table('site_procedimento', Base.metadata,
+                          Column('left_id', Integer,
+                                 ForeignKey('procedimentos.id')),
+                          Column('right_id', Integer,
+                                 ForeignKey('sites.id'))
+                          )
 
 
 class Procedimento(Base):
@@ -25,6 +32,10 @@ class Procedimento(Base):
     produtos = relationship(
         "Produto",
         secondary=produto_procedimento,
+        back_populates="procedimentos")
+    sites = relationship(
+        "Site",
+        secondary=site_procedimento,
         back_populates="procedimentos")
 
     def __init__(self, nome):
@@ -51,6 +62,10 @@ class Site(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(20), unique=True)
     url = Column(String(200))
+    procedimentos = relationship(
+        "Procedimento",
+        secondary=site_procedimento,
+        back_populates="sites")
 
     def __init__(self, title, url):
         self.title = title
