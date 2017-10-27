@@ -1,20 +1,26 @@
 import os
 
+import flask
 from sqlalchemy import (Column, ForeignKey, Integer, String, Table,
                         create_engine)
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 
+app = flask.Flask(__name__)
+app.config['DEBUG'] = True
 path = os.path.dirname(os.path.abspath(__file__))
-engine = create_engine('sqlite:////' + path + '/raspa.db')
+engine = create_engine('sqlite:////' + path + '/raspa.db', convert_unicode=True)
 Base = declarative_base()
+Session = sessionmaker(bind=engine)
+session = scoped_session(Session)
+Base.metadata.bind = engine
 
 produto_procedimento = Table('produto_procedimento', Base.metadata,
                              Column('left_id', Integer,
                                     ForeignKey('procedimentos.id')),
                              Column('right_id', Integer,
                                     ForeignKey('produtos.id'))
-                            )
+                             )
 
 site_procedimento = Table('site_procedimento', Base.metadata,
                           Column('left_id', Integer,

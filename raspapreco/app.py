@@ -1,10 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 
-from models.models import Procedimento, Produto, Site, engine
+from models.models import session, Procedimento, Produto, Site, engine
 from utils.site_scraper import Scraper
-
-Session = sessionmaker(bind=engine)
-session = Session()
 
 
 proc = session.query(Procedimento).filter(Procedimento.nome == 'teste').first()
