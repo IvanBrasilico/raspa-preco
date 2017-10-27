@@ -32,8 +32,10 @@ class TestModel(unittest.TestCase):
         assert site.title == 'teste'
         assert site.url == 'url'
         self.session.commit()
-        # assert site.id is not None
         self.tear_down()
+        # assert site.id is not None
+
+    def test_open_site(self):
 
     def test_produto(self):
         self.set_up()

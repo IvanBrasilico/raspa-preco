@@ -7,16 +7,6 @@
   <link href="/static/css/bootstrap.min.css" rel="stylesheet">
   <link href="/static/css/jquery-ui.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-  <style>
-html {
-background: url('static/images/containers.jpg') no-repeat center center fixed;
--webkit-background-size: cover;
--moz-background-size: cover;
--o-background-size: cover;
-background-size: cover;
-}
-</style>
-
 </head>
 <body>
   <nav class="navbar navbar-default">
@@ -27,7 +17,7 @@ background-size: cover;
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <span class="navbar-brand">Confere Lacres</span>
+        <span class="navbar-brand">Raspa Preço</span>
       </div>
       <div class="navbar-collapse collapse" id="97bf8afda672ef73a836d55f018b43c868a97bb5">
         <ul class="nav navbar-nav">
@@ -35,7 +25,7 @@ background-size: cover;
             <a href="/" title="Site">Brasilico's Site</a>
           </li>
           <li class="active">
-            <a href="/lacre.html" title="Home">Home</a>
+            <a href="/raspapreco/" title="Home">Home</a>
           </li>
         </ul>
       </div>
@@ -51,66 +41,26 @@ background-size: cover;
       </span>
     </div>
     <ul id="rowTab" class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#conteiner">Contêiner</a></li>
-      <li><a data-toggle="tab" href="#arquivo">Arquivo</a></li>
-      <li><a data-toggle="tab" href="#log">Log</a></li>
-      <li><a data-toggle="tab" href="#report">Relatório</a></li>
+      <li class="active"><a data-toggle="tab" href="#sites">Contêiner</a></li>
+      <li><a data-toggle="tab" href="#produtos">Arquivo</a></li>
     </ul>
     <div class="tab-content">
-      <div id="conteiner" class="tab-pane fade in active">
-        <div id="conteinertop" class="row">
-          <div class="row">
-          <div class="col-xs-12">
-            <h3>Número do contêiner</h3>
-          </div>
-         </div>
-         <div class="row">
-         <div class="col-xs-12">
-            <div class="ui-widget">
-              <input id="words" name="words" size="80%" placeholder="Digite o nº do contêiner" />
+      <div id="sites" class="tab-pane fade in active">
+        <div id="sitedetalhe" class="row">
+            <div class="col-xs-12">
+              <form id="frmsite" action="http://127.0.0.1:5000/api/sites" method="post" enctype="text/plain">
+                 <input type="text" name="title">
+                 <input type="text" name="url">
+                 <button class="btn btn-block btn-primary" id="btngravarsite">
+                   <i class="fa fa-thumbs-up"></i>OK
+                 </button>
+              </form>
             </div>
-          </div>
-          <hr />
-         </div>
-         <div class="row">
-            <div class="col-xs-6">
-              <button class="btn btn-primary btn-default" id="btnconteiner" type="button">
-                Pesquisa Contêiner
-              </button>
-            </div>
-              <div class="col-xs-6">
-              <button class="btn btn-primary" id="btnlacre" type="button">
-                Pesquisa Lacre
-              </button>
-            </div>
-           </div>
-        </div> <!-- /#top -->
-        <hr />
-        <div id="conteinerdetalhe" class="row">
-          <div class="row">
-          <div class="table-responsive col-xs-12">
-            <table class="table table-striped" cellspacing="0" cellpadding="0"
-            id="records_table">
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-4">
-            <button class="btn btn-block btn-primary" id="btnok"><i class="fa fa-thumbs-up"></i>OK</button>
-        </div>
-        <div class="col-xs-4">
-          <button class="btn btn-block btn-info" id="btnnok"><i class="fa fa-info-circle"></i>Divergente</button>
-        </div>
-        <div class="col-xs-4">
-          <button class="btn btn-block btn-danger" id="btnsem"><i class="fa fa-trash"></i>Sem Lacre</button>
         </div>
       </div>
-      </div> <!-- /#list -->
     </div>
-  <div id="arquivo" class="tab-pane fade">
-    <div id="arquivodetail" class="row">
+  <div id="produtos" class="tab-pane fade">
+    <div id="produtodetail" class="row">
       <div class="col-md-12">
         <h2>Fazer Upload de novo arquivo</h2>
            <input type="file" id="txtarquivo" />
@@ -125,266 +75,37 @@ background-size: cover;
       </div>
   </div> <!-- /#list -->
 </div>
-<div id="log" class="tab-pane fade">
-  <div id="logdetail" class="row">
-    <div class="table-responsive col-md-12">
-      <button class="btn btn-primary" id="btnlog" type="button">
-        Atualiza Log
-      </button>
-      <table class="table table-striped" cellspacing="0" cellpadding="0"
-      id="records_table_log">
-      <tbody>
-      </tbody>
-    </table>
-  </div>
-</div> <!-- /#list -->
-</div>
-<div id="report" class="tab-pane fade">
-  <div id="reportdetail" class="row">
-    <div class="table-responsive col-md-12">
-      <button class="btn btn-primary" id="btnreport" type="button">
-        Atualiza Relatório
-      </button>
-      <table class="table table-striped" cellspacing="0" cellpadding="0"
-      id="records_table_report">
-      <tbody>
-      </tbody>
-    </table>
-  </div>
-</div> <!-- /#list -->
-</div>
-</div>
-</div>
 <div id="bottom" class="row">
   <div class="col-md-12">
     Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
   </div>
 </div> <!-- /#bottom -->
-
-
-
 <script src="/static/js/jquery.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
 <script src="/static/js/jquery-ui.js"></script>
 <script type="text/javascript">
-$(function() {
-  var submit_form = function(e) {
-    $.getJSON('/_lacre/container/'+$('input[name="words"]').val(),
-    null, function(data) {
-      $('#records_table tbody tr').remove();
-      $.each(data, function(i, item) {
-        for (var key in item){
-          var value = item[key];
-          $('<tr>').append(
-            $('<td>').text(key+':'),
-            $('<td>').text(value)
-          ).appendTo('#records_table');
-        }
-      });
-      $('input[name="words"]').focus().select();
-    })
-    .fail(function() {
-        $('#jsonerror').show();
-    });
-    return false;
-  };
-  var submit_form_lacre = function(e) {
-    $.getJSON('/_lacre/lacre/'+$('input[name="words"]').val(),
-    null, function(data) {
-      $('#records_table tbody tr').remove();
-      $.each(data, function(i, item) {
-        for (var key in item){
-          var value = item[key];
-          $('<tr>').append(
-            $('<td>').text(key+':'),
-            $('<td>').text(value)
-          ).appendTo('#records_table');
-        }
-      });
-      $('input[name="words"]').focus().select();
-    })
-    .fail(function() {
-        $('#jsonerror').show();
-    });
-    return false;
-  };
-  var submit_form_log = function(e) {
-    $.getJSON('/_lacre/list/log',
-    null, function(data) {
-      $('#records_table_log tbody tr').remove();
-      $.each(data, function(i, item) {
-        for (var key in item){
-          var value = item[key];
-          $('<tr>').append(
-            $('<td>').text(key+':'),
-            $('<td>').text(value)
-          ).appendTo('#records_table_log');
-        }
-      });
-      $('input[name="words"]').focus().select();
-    })
-    .fail(function() {
-        $('#jsonerror').show();
-    });
-    return false;
-  };
-  var submit_form_report = function(e) {
-    $.getJSON('/_lacre/list/report',
-    null, function(data) {
-      $('#records_table_report tbody tr').remove();
-      $.each(data, function(i, item) {
-          $('<tr>').append(
-            $('<td>').text(item),
-          ).appendTo('#records_table_report');
-      });
-      $('input[name="words"]').focus().select();
-    })
-    .fail(function() {
-        $('#jsonerror').show();
-    });
-    return false;
-  };
-  var submit_form_ok = function(e) {
-    $.getJSON('/_lacre/add/report',
-    {container: $('input[name="words"]').val(), status: 'OK'}, function(data) {
-    })
-    .fail(function() {
-        $('#jsonerror').show();
-    });
-    return false;
-  };
-  var submit_form_nok = function(e) {
-    $.getJSON('/_lacre/add/report',
-    {container: $('input[name="words"]').val(), status: 'Divergente'}, function(data) {
-    })
-    .fail(function() {
-        $('#jsonerror').show();
-    });
-    return false;
-  };
-  var submit_form_sem = function(e) {
-    $.getJSON('/_lacre/add/report',
-    {container: $('input[name="words"]').val(), status: 'Sem Lacre!'}, function(data) {
-    })
-    .fail(function() {
-        $('#jsonerror').show();
-    });
-    return false;
-  };
-  $('button#btnconteiner').bind('click', submit_form);
-  $('button#btnlacre').bind('click', submit_form_lacre);
-  $('button#btnlog').bind('click', submit_form_log);
-  $('button#btnreport').bind('click', submit_form_report);
-  $('button#btnok').bind('click', submit_form_ok);
-  $('button#btnnok').bind('click', submit_form_nok);
-  $('button#btnsem').bind('click', submit_form_sem);
-  $('input[type="text"]').bind('keydown', function(e) {
-    if (e.keyCode == 13) {
-      submit_form(e);
-    }
-  });
-  $('input[name="words"]').focus();
-});
-$( function() {
-  var availableTags;
-  var update_drop_down = function(e) {
-    $.getJSON('/_lacre/container_autocomplete/'+$('input[name="words"]').val(),
-    null, function(data) {
-      console.log(data);
-      availableTags = data;
-      $( "#words" ).autocomplete({
-        source: availableTags
-      });
-    })
-    .fail(function() {
-        $('#jsonerror').show();
-    });
-    return false;
-  };
-});
-$( function() {
-  function split( val ) {
-    return val.split( /,\s*/ );
-  }
-  function extractLast( term ) {
-    var n = term.split(" ");
-    return n[n.length - 1];
-  }
-  $( "#words" )
-  // don't navigate away from the field on tab when selecting an item
-  .on( "keydown", function( event ) {
-    if ( event.keyCode === $.ui.keyCode.TAB &&
-      $( this ).autocomplete( "instance" ).menu.active ) {
-        event.preventDefault();
-      }
-    })
-    .autocomplete({
-      source: function( request, response ) {
-        $.getJSON('/_lacre/container_autocomplete/'+$('input[name="words"]').val(),
-        null, response );
+$('#btngravarsite').click(function () {
+    var form = $('#frmsite');
+    $.ajax({
+      headers: {
+        'Content-Type': 'application/json'
       },
-      search: function() {
-        // custom minLength
-        var term = extractLast( this.value );
-        if ( term.length < 2 ) {
-          return false;
-        }
+      url: form.attr("action"),
+      data: JSON.stringify( form.serializeArray() ),
+      type: form.attr("method"),
+      enctype: form.attr("enctype"),
+      dataType: 'json',
+      success: function (data) {
+          alert("Site criado!");  // <-- This is just a placeholder for now for testing
       },
-      focus: function() {
-        // prevent value inserted on focus
-        return false;
-      },
-      select: function( event, ui ) {
-        var terms = this.value.split(" ")
-        // remove the current input
-        terms.pop();
-        // add the selected item
-        terms.push( ui.item.value );
-        // add placeholder to get the comma-and-space at the end
-        terms.push( "" );
-        this.value = terms.join( " " );
-        return false;
+      error : function (data) {
+          console.log(form.attr("action"));
+          console.log(data);
+          $('#jsonerror').show();
       }
     });
-  });
-  $(function() {
-    var atualizaArquivos = function() {
-      $.getJSON("/_lacre/list_files", function(data) {
-      $('#records_table_files tbody tr').remove();
-      $.each(data, function(i, item) {
-          $('<tr>').append(
-            $('<td>').text(item),
-            $('<td>').html('<a href="_lacre/delete/file/'+item+'"><button class="btn btn-block"><i class="fa fa-trash"></i>&nbsp;</button></a>'),
-            $('<td>').html('<a href="_lacre/select/file/'+item+'"><button class="btn btn-block"><i class="fa fa-thumbs-up"></i>&nbsp;</button></a>'),
-          ).appendTo('#records_table_files');
-      });
-    });
-    };
-    $(document).ready(function() {
-      atualizaArquivos();
-    });
-      $('#btnarquivo').click(function () {
-          var myFileInput = document.getElementById('txtarquivo');
-          if (myFileInput.files.length > 0) {
-            var formArquivo = new FormData();
-            formArquivo.set('file', myFileInput.files[0])
-            $.ajax({
-                url: '_lacre/upload',
-                data: formArquivo,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                success: function (data) {
-                  atualizaArquivos();
-                },
-                error : function (data) {
-                  console.log(data);
-                  $('#jsonerror').show();
-                }
-            });
-          }
-      });
-  });
-  </script>
+    return false;
+});
+</script>
 </body>
 </html>

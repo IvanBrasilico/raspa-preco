@@ -83,9 +83,9 @@ def extrai_valor(texto):
 def make_floatlist(str_list):
     '''Receives a list of strings, parses into a list of floats'''
     list_float = []
-    sum = 0
+    soma = 0
     for item in str_list:
         value = extrai_valor(item)
         list_float.append(value)
-        sum += value
-    return list_float, sum
+        soma += value
+    return list_float, soma
