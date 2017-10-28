@@ -26,6 +26,7 @@ setup(
         'certifi',
         'chardet',
         'flask',
+        'flask_cors',
         'flask_restless',
         'flask_sqlalchemy',
         'idna',
