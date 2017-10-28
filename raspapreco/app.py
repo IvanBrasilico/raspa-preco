@@ -1,8 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 
-from models.models import session, Procedimento, Produto, Site, engine
+from models.models import Procedimento, Produto, Site, engine, session
 from utils.site_scraper import Scraper
-
 
 proc = session.query(Procedimento).filter(Procedimento.nome == 'teste').first()
 if proc is None:

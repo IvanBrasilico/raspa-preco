@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 import requests_mock
+
 from raspapreco.utils.site_scraper import Scraper, make_floatlist
 
 
