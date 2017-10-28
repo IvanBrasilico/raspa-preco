@@ -37,7 +37,15 @@
           <span aria-hidden="true">&times;</span>
       </button>
       <span>
-        <p>Erro na conexão ao Servidor!</p>
+        <p>Erro na conexão ao Servidor! <span id="erro"></span></p>
+      </span>
+    </div>
+    <div class="alert alert-success alert-dismissible collapse" role="alert" id="jsonsuccess">
+      <button type="button" class="close" onclick="$('#jsonerror').hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+      </button>
+      <span>
+        <p>Sucesso! <span id="success"></span></p>
       </span>
     </div>
     <ul id="rowTab" class="nav nav-tabs">
@@ -47,15 +55,35 @@
     <div class="tab-content">
       <div id="sites" class="tab-pane fade in active">
         <div id="sitedetalhe" class="row">
-            <div class="col-xs-12">
+          <div class="row">
               <form id="frmsite" action="http://127.0.0.1:5000/api/sites" method="post" enctype="text/plain">
-                 <input type="text" name="title">
-                 <input type="text" name="url">
+                <div class="row">
+                <div class="col-xs-6">
+                  <div class="row">
+                <div class="col-xs-8">
+                  <input type="hidden" name="id" id="id">
+                 <input type="text" name="title" id="title">
+                 <input type="text" name="url" id="url">
+               </div>
+               <div class="col-xs-4">
+               </div>
+             </div>
+               <div class="row">
+               <div class="col-xs-4">
                  <button class="btn btn-block btn-primary" id="btngravarsite">
                    <i class="fa fa-thumbs-up"></i>OK
                  </button>
+             </div>
+               <div class="col-xs-8">
+               </div>
+             </div>
+             <div class="col-xs-6">
+           </div>
+         </div>
+               </div>
               </form>
             </div>
+            <div id="result" class="row"></div>
         </div>
       </div>
     </div>
@@ -84,27 +112,56 @@
 <script src="/static/js/bootstrap.min.js"></script>
 <script src="/static/js/jquery-ui.js"></script>
 <script type="text/javascript">
-$('#btngravarsite').click(function () {
-    var form = $('#frmsite');
-    $.ajax({
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      url: form.attr("action"),
-      data: JSON.stringify( form.serializeArray() ),
-      type: form.attr("method"),
-      enctype: form.attr("enctype"),
-      dataType: 'json',
-      success: function (data) {
-          alert("Site criado!");  // <-- This is just a placeholder for now for testing
-      },
-      error : function (data) {
-          console.log(form.attr("action"));
-          console.log(data);
-          $('#jsonerror').show();
+$( "#frmsite" ).submit(function( event ) {
+  // Stop form from submitting normally
+  event.preventDefault();
+
+  $('#jsonsuccess').hide();
+  $('#jsonerror').hide();
+
+  // Get some values from elements on the page:
+  var $form = $( this )
+  var formdata = {};
+  for (var i = 0, ii = $form.length; i < ii; ++i) {
+      var input = $form[i];
+      if (input.name) {
+         formdata[input.name] = input.value;
       }
-    });
-    return false;
+  }
+  type = 'post';
+  console.log("VAL: " + $("#id").val())
+  formdata = {'title': $("#title").val(), 'url':$("#url").val()}
+  if( $("#id").val() ) {
+    type = 'put';
+    formdata = {'id': $("#id").val(), 'title': $("#title").val(), 'url':$("#url").val()}
+    $("#id").val("");
+  }
+  console.log(formdata)
+  var url = $form.attr( "action" );
+  $.ajax({
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.api+json'
+    },
+    url: url,
+    data: JSON.stringify(formdata),
+    type: type,
+    enctype: $form.attr("enctype"),
+    dataType: 'json',
+    success: function (data) {
+        console.log(data);
+        console.log("ID: "+data["id"]);
+        $('#id').val(data["id"])
+        $('#success').empty().append("Site criado")
+        $('#jsonsuccess').show();
+    },
+    error : function (data) {
+        console.log($form.attr("action"));
+        console.log(data.responseJSON);
+        $('#erro').empty().append(data.responseJSON["message"])
+        $('#jsonerror').show();
+    }
+  });
 });
 </script>
 </body>
