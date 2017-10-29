@@ -1,8 +1,25 @@
+import sys
+from flask import Flask
 import flask_restless
 from flask_cors import CORS
 
 # from models.modelsflask import app, db, Procedimento, Site
-from raspapreco.models.models import Procedimento, Produto, Site, app, session
+from raspapreco.models.models import Procedimento, Produto, Site, session
+
+
+app = Flask(__name__)
+
+if len(sys.argv) > 1:
+    if sys.argv[1] == '--debug':
+        app.config['DEBUG'] = True
+        app.config['static_url_path'] = '/static'
+
+        @app.route('/')
+        def hello_world():
+            with open('raspapreco/site/index.html') as f:
+                home = f.read()
+            return home
+
 
 # Create the Flask-Restless API manager.
 manager = flask_restless.APIManager(app, session=session)
