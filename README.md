@@ -7,7 +7,7 @@ O foco não é comparação de preços (a exemplo de google shopping e buscape) 
 
 Ver wiki para documentação
 
-## Dev Install (Linux):
+### Dev Install (Linux):
 
 ```
 git clone https://github.com/IvanBrasilico/raspa-preco.git
