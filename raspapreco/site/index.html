@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/bootstrap.css" rel="stylesheet">
   <link href="/static/css/jquery-ui.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 </head>
@@ -126,6 +126,34 @@
       $("#frmsite").submit(function (event) {
         // Stop form from submitting normally
         event.preventDefault();
+  <div id="produtos" class="tab-pane fade">
+    <div id="produtodetail" class="row">
+      <div class="col-md-12">
+        <h2>Fazer Upload de novo arquivo</h2>
+           <input type="file" id="txtarquivo" />
+           <button class="btn btn-primary" id="btnarquivo">
+             Enviar
+           </button>
+          <table class="table table-striped" cellspacing="0" cellpadding="0"
+          id="records_table_files">
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+  </div> <!-- /#list -->
+</div>
+<div id="bottom" class="row">
+  <div class="col-md-12">
+    Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+  </div>
+</div> <!-- /#bottom -->
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/jquery-ui.js"></script>
+<script type="text/javascript">
+$( "#frmsite" ).submit(function( event ) {
+  // Stop form from submitting normally
+  event.preventDefault();
 
         $('#jsonsuccess').hide();
         $('#jsonerror').hide();
