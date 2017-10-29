@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,11 +9,13 @@
   <link href="/static/css/jquery-ui.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 </head>
+
 <body>
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header header">
-        <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#97bf8afda672ef73a836d55f018b43c868a97bb5" data-toggle="collapse" type="button">
+        <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#97bf8afda672ef73a836d55f018b43c868a97bb5"
+          data-toggle="collapse" type="button">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
@@ -34,135 +37,145 @@
   <div class="container">
     <div class="alert alert-danger alert-dismissible collapse" role="alert" id="jsonerror">
       <button type="button" class="close" onclick="$('#jsonerror').hide()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        <span aria-hidden="true">&times;</span>
       </button>
       <span>
-        <p>Erro na conexão ao Servidor! <span id="erro"></span></p>
+        <p>Erro na conexão ao Servidor!
+          <span id="erro"></span>
+        </p>
       </span>
     </div>
     <div class="alert alert-success alert-dismissible collapse" role="alert" id="jsonsuccess">
-      <button type="button" class="close" onclick="$('#jsonerror').hide()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+      <button type="button" class="close" onclick="$('#jsonsuccces').hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
       </button>
       <span>
-        <p>Sucesso! <span id="success"></span></p>
+        <p>Sucesso!
+          <span id="success"></span>
+        </p>
       </span>
     </div>
     <ul id="rowTab" class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#sites">Contêiner</a></li>
-      <li><a data-toggle="tab" href="#produtos">Arquivo</a></li>
+      <li class="active">
+        <a data-toggle="tab" href="#sites">Contêiner</a>
+      </li>
+      <li>
+        <a data-toggle="tab" href="#produtos">Arquivo</a>
+      </li>
     </ul>
     <div class="tab-content">
       <div id="sites" class="tab-pane fade in active">
         <div id="sitedetalhe" class="row">
           <div class="row">
-              <form id="frmsite" action="http://127.0.0.1:5000/api/sites" method="post" enctype="text/plain">
-                <div class="row">
+            <form id="frmsite" action="http://127.0.0.1:5000/api/sites" method="post" enctype="text/plain">
+              <div class="row">
                 <div class="col-xs-6">
                   <div class="row">
-                <div class="col-xs-8">
-                  <input type="hidden" name="id" id="id">
-                 <input type="text" name="title" id="title">
-                 <input type="text" name="url" id="url">
-               </div>
-               <div class="col-xs-4">
-               </div>
-             </div>
-               <div class="row">
-               <div class="col-xs-4">
-                 <button class="btn btn-block btn-primary" id="btngravarsite">
-                   <i class="fa fa-thumbs-up"></i>OK
-                 </button>
-             </div>
-               <div class="col-xs-8">
-               </div>
-             </div>
-             <div class="col-xs-6">
-           </div>
-         </div>
-               </div>
-              </form>
-            </div>
-            <div id="result" class="row"></div>
+                    <div class="col-xs-4">
+                      Título:
+                      <br> URL:
+                      <br>
+                    </div>
+                    <div class="col-xs-4">
+                      <input type="hidden" name="id" id="id">
+                      <input type="text" name="title" id="title">
+                      <input type="text" name="url" id="url">
+                    </div>
+                    <div class="col-xs-4">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-4">
+                      <button class="btn btn-block btn-primary" id="btngravarsite">
+                        <i class="fa fa-thumbs-up"></i>OK
+                      </button>
+                    </div>
+                    <div class="col-xs-8">
+                    </div>
+                  </div>
+                  <div class="col-xs-6">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div id="result" class="row">
+            <table class="table table-striped" cellspacing="0" cellpadding="0" id="records_table_files">
+              <tbody>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+      </div>
+      <div id="produtos" class="tab-pane fade">
+        <div id="produtodetail" class="row">
+        </div>
+      </div>
+      <div id="bottom" class="row">
+        <div class="col-md-12">
+          Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
         </div>
       </div>
     </div>
-  <div id="produtos" class="tab-pane fade">
-    <div id="produtodetail" class="row">
-      <div class="col-md-12">
-        <h2>Fazer Upload de novo arquivo</h2>
-           <input type="file" id="txtarquivo" />
-           <button class="btn btn-primary" id="btnarquivo">
-             Enviar
-           </button>
-          <table class="table table-striped" cellspacing="0" cellpadding="0"
-          id="records_table_files">
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-  </div> <!-- /#list -->
-</div>
-<div id="bottom" class="row">
-  <div class="col-md-12">
-    Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
-  </div>
-</div> <!-- /#bottom -->
-<script src="/static/js/jquery.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/jquery-ui.js"></script>
-<script type="text/javascript">
-$( "#frmsite" ).submit(function( event ) {
-  // Stop form from submitting normally
-  event.preventDefault();
+    <!-- /#bottom -->
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/jquery-ui.js"></script>
+    <script type="text/javascript">
+      $("#frmsite").submit(function (event) {
+        // Stop form from submitting normally
+        event.preventDefault();
 
-  $('#jsonsuccess').hide();
-  $('#jsonerror').hide();
+        $('#jsonsuccess').hide();
+        $('#jsonerror').hide();
 
-  // Get some values from elements on the page:
-  var $form = $( this )
-  var formdata = {};
-  for (var i = 0, ii = $form.length; i < ii; ++i) {
-      var input = $form[i];
-      if (input.name) {
-         formdata[input.name] = input.value;
-      }
-  }
-  type = 'post';
-  console.log("VAL: " + $("#id").val())
-  formdata = {'title': $("#title").val(), 'url':$("#url").val()}
-  if( $("#id").val() ) {
-    type = 'put';
-    formdata = {'id': $("#id").val(), 'title': $("#title").val(), 'url':$("#url").val()}
-    $("#id").val("");
-  }
-  console.log(formdata)
-  var url = $form.attr( "action" );
-  $.ajax({
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/vnd.api+json'
-    },
-    url: url,
-    data: JSON.stringify(formdata),
-    type: type,
-    enctype: $form.attr("enctype"),
-    dataType: 'json',
-    success: function (data) {
-        console.log(data);
-        console.log("ID: "+data["id"]);
-        $('#id').val(data["id"])
-        $('#success').empty().append("Site criado")
-        $('#jsonsuccess').show();
-    },
-    error : function (data) {
-        console.log($form.attr("action"));
-        console.log(data.responseJSON);
-        $('#erro').empty().append(data.responseJSON["message"])
-        $('#jsonerror').show();
-    }
-  });
-});
-</script>
+        // Get some values from elements on the page:
+        var $form = $(this)
+        var formdata = {};
+        for (var i = 0, ii = $form.length; i < ii; ++i) {
+          var input = $form[i];
+          if (input.name) {
+            formdata[input.name] = input.value;
+          }
+        }
+        type = 'post';
+        var url = $form.attr("action");
+        console.log("VAL: " + $("#id").val())
+        formdata = { 'title': $("#title").val(), 'url': $("#url").val() }
+        if ($("#id").val()) {
+          type = 'put';
+          url = url + '/' + $("#id").val();
+          formdata = { 'id': $("#id").val(), 'title': $("#title").val(), 'url': $("#url").val() }
+          $("#id").val("");
+        }
+        console.log(formdata)
+        $.ajax({
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.api+json'
+          },
+          url: url,
+          data: JSON.stringify(formdata),
+          type: type,
+          enctype: $form.attr("enctype"),
+          dataType: 'json',
+          success: function (data) {
+            console.log(data);
+            console.log("ID: " + data["id"]);
+            $('#id').val(data["id"])
+            $('#success').empty().append("Site criado")
+            $('#jsonsuccess').show();
+          },
+          error: function (data) {
+            console.log($form.attr("action"));
+            console.log(data.responseJSON);
+            $('#erro').empty().append(data.responseJSON["message"])
+            $('#jsonerror').show();
+          }
+        });
+      });
+    </script>
 </body>
+
 </html>
