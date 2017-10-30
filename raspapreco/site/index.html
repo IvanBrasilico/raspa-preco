@@ -77,9 +77,21 @@
                 <label for="url">URL:</label>
                 <input type="text" class="form-control" id="url">
               </div>
-              <button class="btn btn-block btn-primary" id="btngravarsite">
-                <i class="fa fa-thumbs-up"></i>OK
-              </button>
+              <div class="col-xs-4">
+                <button class="btn btn-block btn-primary btn-default" id="btngravarsite">
+                  <i class="fa fa-save"></i>&nbsp;Gravar
+                </button>
+              </div>
+              <div class="col-xs-4">
+                <button class="btn btn-block btn-info" id="btngravarsite">
+                  <i class="fa fa-plus"></i>&nbsp;Novo
+                </button>
+              </div>
+              <div class="col-xs-4">
+                <button class="btn btn-block btn-danger" id="btnexlcuirsite">
+                  <i class="fa fa-thumbs-up"></i>&nbsp;Excluir
+                </button>
+              </div>
             </form>
           </div>
           <div class="col-xs-4" id="sitelist">
@@ -88,7 +100,7 @@
               <label for="url">Filtrar</label>
               <input type="text" class="form-control" id="txtfilter">
               <button class="btn" id="btnfilter">
-                <i class="fa fa-thumbs-up"></i>OK
+                <i class="fa fa-filter"></i>OK
               </button>
             </div>
             <table class="table table-striped table-bordered table-hover table-responsive" cellspacing="0" cellpadding="0" id="sites_table">
