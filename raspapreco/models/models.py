@@ -6,12 +6,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 
 path = os.path.dirname(os.path.abspath(__file__))
-engine = create_engine('sqlite:////' + path +
-                       '/raspa.db', convert_unicode=True)
+path = os.path.join(path, 'raspa.db')
+if os.name != 'nt':
+    path = '/'+path
+engine = create_engine('sqlite:///' + path, convert_unicode=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = scoped_session(Session)
 Base.metadata.bind = engine
+
 
 produto_procedimento = Table('produto_procedimento', Base.metadata,
                              Column('left_id', Integer,
@@ -77,4 +80,5 @@ class Site(Base):
 
 
 if __name__ == '__main__':
-    Base.metadata.create_all(engine)
+    pass
+    # Base.metadata.create_all(engine)

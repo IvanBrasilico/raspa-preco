@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
+  <meta charset="iso8859-1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="/static/css/bootstrap.css" rel="stylesheet">
@@ -57,10 +57,10 @@
     </div>
     <ul id="rowTab" class="nav nav-tabs">
       <li class="active">
-        <a data-toggle="tab" href="#sites">Contêiner</a>
+        <a data-toggle="tab" href="#sites">Site</a>
       </li>
       <li>
-        <a data-toggle="tab" href="#produtos">Arquivo</a>
+        <a data-toggle="tab" href="#produtos">Produto</a>
       </li>
     </ul>
     <div class="tab-content">
@@ -78,18 +78,18 @@
                 <input type="text" class="form-control" id="url">
               </div>
               <div class="col-xs-4">
-                <button class="btn btn-block btn-primary btn-default" id="btngravarsite">
+                <button class="btn btn-block btn-primary btn-default" id="btnsave">
                   <i class="fa fa-save"></i>&nbsp;Gravar
                 </button>
               </div>
               <div class="col-xs-4">
-                <button class="btn btn-block btn-info" id="btngravarsite">
+                <button class="btn btn-block btn-info" id="btnclear">
                   <i class="fa fa-plus"></i>&nbsp;Novo
                 </button>
               </div>
               <div class="col-xs-4">
-                <button class="btn btn-block btn-danger" id="btnexlcuirsite">
-                  <i class="fa fa-thumbs-up"></i>&nbsp;Excluir
+                <button class="btn btn-block btn-danger" id="btndelete">
+                  <i class="fa fa-trash"></i>&nbsp;Excluir
                 </button>
               </div>
             </form>
@@ -123,18 +123,21 @@
   </div>
   <!-- /#bottom -->
   <script src="/static/js/jquery.js"></script>
-  <script src="/static/js/bootstrap.min.js"></script>
+  <script src="/static/js/bootstrap.js"></script>
   <script src="/static/js/jquery-ui.js"></script>
   <script type="text/javascript">
     $("#frmsite").submit(function (event) {
       // Stop form from submitting normally
       event.preventDefault();
+    });
+
+    $(document).on('click', '#btnsave', function () {
 
       $('#jsonsuccess').hide();
       $('#jsonerror').hide();
 
       // Get some values from elements on the page:
-      var $form = $(this)
+      var $form = $('#frmsites')
       var formdata = {};
       for (var i = 0, ii = $form.length; i < ii; ++i) {
         var input = $form[i];
@@ -171,7 +174,7 @@
           $('#id').val(data["id"])
           $('#success').empty().append("Site " + mensagem + ".")
           $('#jsonsuccess').show();
-          listasites();
+          list_filtered(null, $('#txtfilter').val());
         },
         error: function (data) {
           console.log($form.attr("action"));
@@ -193,18 +196,28 @@
       });
     });
     $(document).ready(function () {
-      listasites();
+        list_filtered();
     });
     $(document).on('click', '#btnfilter', function () {
-      listasites(null, $('#txtfilter').val());
+        list_filtered(null, $('#txtfilter').val());
     });
-    var listasites = function (e, filter) {
+    $(document).on('click', '#btnclear', function () {
+        event.preventDefault();
+        clear_form();
+    });
+    $(document).on('click', '#btndelete', function () {
+            form = $('#frmsites');
+            url = '/api/sites';
+            one_id = $('#id').val();
+            delete_form_id(form, url, one_id);
+    });
+
+    var list_filtered = function (e, filter) {
       console.log(filter);
       params = null;
       url = '/api/sites';
       if (filter) {
         params = '{"filters": [{ "name": "title", "op": "like", "val": "%' + filter + '%"}]}'
-        // params = $.param(params)
         url = url + '?q=' + params
       }
       headers = { 'Content-Type': 'application/json' }
@@ -216,12 +229,42 @@
         $.each(data.objects, function (i, item) {
           $('<tr>').append(
             $('<td>').text(item.id),
-            $('<td>').text(item.title),
+            $('<td>').text(item.title)
           ).appendTo('#sites_table');
         });
       });
       return false;
+    };
+    var clear_form = function () {
+          $("#id").val('');
+          $('#title').val('');
+          $('#url').val('');
+    };
+    var delete_form_id = function (form, url, one_id) {
+      $.ajax({
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.api+json'
+        },
+        url: url + '/' + one_id,
+        type: 'delete',
+        enctype: form.attr("enctype"),
+        dataType: 'json',
+        success: function (data) {
+          console.log(data);
+          clear_form();
+          $('#success').empty().append("Site excluído.")
+          $('#jsonsuccess').show();
+          list_filtered(null, $('#txtfilter').val());
+        },
+        error: function (data) {
+          console.log(data.responseJSON);
+          $('#erro').empty().append(data.responseJSON["message"])
+          $('#jsonerror').show();
+        }
+      });
     }
+    
 
   </script>
 </body>
