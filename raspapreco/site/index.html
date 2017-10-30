@@ -78,18 +78,18 @@
                 <input type="text" class="form-control" id="url">
               </div>
               <div class="col-xs-4">
-                <button class="btn btn-block btn-primary btn-default" id="btngravarsite">
+                <button class="btn btn-block btn-primary btn-default" id="btnsave">
                   <i class="fa fa-save"></i>&nbsp;Gravar
                 </button>
               </div>
               <div class="col-xs-4">
-                <button class="btn btn-block btn-info" id="btngravarsite">
+                <button class="btn btn-block btn-info" id="btnclear">
                   <i class="fa fa-plus"></i>&nbsp;Novo
                 </button>
               </div>
               <div class="col-xs-4">
-                <button class="btn btn-block btn-danger" id="btnexlcuirsite">
-                  <i class="fa fa-thumbs-up"></i>&nbsp;Excluir
+                <button class="btn btn-block btn-danger" id="btndelete">
+                  <i class="fa fa-trash"></i>&nbsp;Excluir
                 </button>
               </div>
             </form>
@@ -129,12 +129,15 @@
     $("#frmsite").submit(function (event) {
       // Stop form from submitting normally
       event.preventDefault();
+    });
+
+    $(document).on('click', '#btnsave', function () {
 
       $('#jsonsuccess').hide();
       $('#jsonerror').hide();
 
       // Get some values from elements on the page:
-      var $form = $(this)
+      var $form = $('#frmsites')
       var formdata = {};
       for (var i = 0, ii = $form.length; i < ii; ++i) {
         var input = $form[i];
@@ -193,13 +196,14 @@
       });
     });
     $(document).ready(function () {
-      list_filtered();
+        list_filtered();
     });
     $(document).on('click', '#btnfilter', function () {
-      list_filtered(null, $('#txtfilter').val());
+        list_filtered(null, $('#txtfilter').val());
     });
     $(document).on('click', '#btnclear', function () {
-            clear_form();
+        event.preventDefault();
+        clear_form();
     });
     $(document).on('click', '#btndelete', function () {
             form = $('#frmsites');
@@ -242,8 +246,8 @@
           'Content-Type': 'application/json',
           'Accept': 'application/vnd.api+json'
         },
-        url: url + one_id,
-        type: type,
+        url: url + '/' + one_id,
+        type: 'delete',
         enctype: form.attr("enctype"),
         dataType: 'json',
         success: function (data) {
