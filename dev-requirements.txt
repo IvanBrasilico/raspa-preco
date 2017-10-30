@@ -1,3 +1,4 @@
+flake8-quotes
 pytest
 requests-mock
 tox

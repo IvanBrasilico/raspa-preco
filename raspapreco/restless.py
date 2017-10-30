@@ -1,11 +1,11 @@
 import sys
-from flask import Flask
+
 import flask_restless
+from flask import Flask
 from flask_cors import CORS
 
 # from models.modelsflask import app, db, Procedimento, Site
 from raspapreco.models.models import Procedimento, Produto, Site, session
-
 
 app = Flask(__name__)
 

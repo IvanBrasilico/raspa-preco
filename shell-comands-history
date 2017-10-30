@@ -52,3 +52,14 @@ pip install -r requirements.txt
 pip install -e . # IMPORTANTE para setar . como PYTHONPATH
 
 ## Não esquecer de ir ao Travis adicionar o repositório e pegar o badge para o README após ter alguns testes rodando
+
+
+
+Para servir a parte estática, colocar as seguintes linhas
+no arquivo nginx/sites-enabled e colocar o conteúdo de sites em 
+/var/ww/html:
+
+location ~ ^/api.* {
+    proxy_pass http://127.0.0.1:5000;
+
+}

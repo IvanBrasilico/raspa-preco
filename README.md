@@ -17,11 +17,12 @@ python -m virtualenv venv
 . venv/bin/activate
 pip install -r requirements.txt
 pip install -e . # IMPORTANTE para setar . como PYTHONPATH
-python raspapreco/restless.py --debug# Inicia a aplicação
+python raspapreco/restless.py --debug  # Inicia a aplicação
 pip install -r dev-requirements.txt
 # Testar:
 python -m pytest
 tox
+
 ```
 Após iniciar a aplicação, a interface web pode ser acessada em raspapreco/site/ (Preferencialmente publicar o conteúdo deste diretório em um servidor Web)
 

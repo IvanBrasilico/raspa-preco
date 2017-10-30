@@ -5,7 +5,6 @@ from sqlalchemy import (Column, ForeignKey, Integer, String, Table,
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 
-
 path = os.path.dirname(os.path.abspath(__file__))
 engine = create_engine('sqlite:////' + path +
                        '/raspa.db', convert_unicode=True)
