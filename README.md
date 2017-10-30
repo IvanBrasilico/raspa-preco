@@ -7,14 +7,17 @@ O foco não é comparação de preços (a exemplo de google shopping e buscape) 
 
 Ver wiki para documentação
 
-### Dev Install (Linux):
+### Dev Install (Linux Ubuntu e Windows):
 
 ```
 git clone https://github.com/IvanBrasilico/raspa-preco.git
 cd raspa-preco
-sudo pip install virtualenv (caso ainda não tenha instalado)
-python -m virtualenv venv
-. venv/bin/activate
+Linux: sudo pip install virtualenv (caso ainda não tenha instalado)
+Windows: pip install virtualenv (caso ainda não tenha instalado)
+python3 -m virtualenv venv
+Linux: . venv/bin/activate
+Windows: cd venv/Scripts
+        activate.bat
 pip install -r requirements.txt
 pip install -e . # IMPORTANTE para setar . como PYTHONPATH
 python raspapreco/restless.py --debug  # Inicia a aplicação
