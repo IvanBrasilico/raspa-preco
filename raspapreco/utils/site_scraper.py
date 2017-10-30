@@ -19,8 +19,8 @@ SCRAPY_DICT = \
 
 
 class Scraper:
-    '''Receives sites and produtos, call necessary functions,
-    do error management and store resuls'''
+    """Receives sites and produtos, call necessary functions,
+    do error management and store resuls"""
 
     def __init__(self, sites=None, produtos=None):
         self.sites = sites
@@ -56,7 +56,7 @@ def scrap_one(site, produto):
     target_atributes = target[1]
 
     html = requests.get(url, params=search)
-    bs = BeautifulSoup(html.text, "html.parser")
+    bs = BeautifulSoup(html.text, 'html.parser')
     if xpath:
         pass  # TODO: implementar busca por XPATH
     else:
@@ -81,7 +81,7 @@ def extrai_valor(texto):
 
 
 def make_floatlist(str_list):
-    '''Receives a list of strings, parses into a list of floats'''
+    """Receives a list of strings, parses into a list of floats"""
     list_float = []
     soma = 0
     for item in str_list:

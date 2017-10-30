@@ -34,13 +34,13 @@ class Procedimento(Base):
     id = Column(Integer, primary_key=True)
     nome = Column(String(20), unique=True)
     produtos = relationship(
-        "Produto",
+        'Produto',
         secondary=produto_procedimento,
-        back_populates="procedimentos")
+        back_populates='procedimentos')
     sites = relationship(
-        "Site",
+        'Site',
         secondary=site_procedimento,
-        back_populates="procedimentos")
+        back_populates='procedimentos')
 
     def __init__(self, nome):
         self.nome = nome
@@ -52,9 +52,9 @@ class Produto(Base):
     id = Column(Integer, primary_key=True)
     descricao = Column(String(50), unique=True)
     procedimentos = relationship(
-        "Procedimento",
+        'Procedimento',
         secondary=produto_procedimento,
-        back_populates="produtos")
+        back_populates='produtos')
 
     def __init__(self, descricao):
         self.descricao = descricao
@@ -67,9 +67,9 @@ class Site(Base):
     title = Column(String(20), unique=True)
     url = Column(String(200))
     procedimentos = relationship(
-        "Procedimento",
+        'Procedimento',
         secondary=site_procedimento,
-        back_populates="sites")
+        back_populates='sites')
 
     def __init__(self, title, url):
         self.title = title
