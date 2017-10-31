@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 path = os.path.dirname(os.path.abspath(__file__))
 path = os.path.join(path, 'raspa.db')
 if os.name != 'nt':
-    path = '/'+path
+    path = '/' + path
 engine = create_engine('sqlite:///' + path, convert_unicode=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)

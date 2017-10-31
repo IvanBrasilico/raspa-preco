@@ -55,16 +55,15 @@ class FlaskTestCase(unittest.TestCase):
         return fields['title']
 
     def _query(self, title):
-        headers = {'Content-Type': 'application/json'}
         filters = [dict(name='title', op='like', val='%' + title + '%')]
         params = dict(q=json.dumps(dict(filters=filters)))
         params = urlencode(params)
         url = '/api/sites?%s' % params
         rv = self.app.get(url,
-                          headers={'Content-Type': 'application/json'})
+                          headers=headers)
         print(rv.data)
         fields = json.loads(rv.data.decode('utf-8'))
-        assert fields['objects'][0]['title'].find(title) != -1
+        assert fields['objects'][0]['title'].lower().find(title.lower()) != -1
 
     def _put(self, siteid):
         rv = self.app.put('/api/sites/' + str(siteid), data=json.dumps({'title': 'test2',
@@ -78,6 +77,48 @@ class FlaskTestCase(unittest.TestCase):
 
     def _delete(self, siteid):
         rv = self.app.delete('/api/sites/' + str(siteid), follow_redirects=True,
+                             headers={'Content-Type': 'application/json'})
+        print(rv.data)
+        # fields = json.loads(rv.data.decode("utf-8"))
+        assert rv.data == b''
+
+    def test_apiproduto(self):
+        produtoid = self._postproduto()
+        descricao = self._getproduto(produtoid)
+        self._queryproduto(descricao)
+        # self._put(siteid)
+        self._deleteproduto(produtoid)
+
+    def _postproduto(self):
+        rv = self.app.post('/api/produtos', data=json.dumps({'descricao': 'test'}),
+                           follow_redirects=True,
+                           headers={'Content-Type': 'application/json'})
+        fields = json.loads(rv.data.decode('utf-8'))
+        assert b'"descricao": "test"' in rv.data
+        return fields['id']
+
+    def _getproduto(self, produtoid):
+        rv = self.app.get('/api/produtos/' + str(produtoid), follow_redirects=True,
+                          headers={'Content-Type': 'application/json'})
+        fields = json.loads(rv.data.decode('utf-8'))
+        assert produtoid == fields['id']
+        assert fields['descricao'] == 'test'
+        return fields['descricao']
+
+    def _queryproduto(self, descricao):
+        filters = [dict(name='descricao', op='like',
+                        val='%' + descricao + '%')]
+        params = dict(q=json.dumps(dict(filters=filters)))
+        params = urlencode(params)
+        url = '/api/produtos?%s' % params
+        rv = self.app.get(url,
+                          headers=headers)
+        print(rv.data)
+        fields = json.loads(rv.data.decode('utf-8'))
+        assert fields['objects'][0]['descricao'].find(descricao) != -1
+
+    def _deleteproduto(self, produtoid):
+        rv = self.app.delete('/api/produtos/' + str(produtoid), follow_redirects=True,
                              headers={'Content-Type': 'application/json'})
         print(rv.data)
         # fields = json.loads(rv.data.decode("utf-8"))
