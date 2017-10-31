@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <meta charset="iso8859-1">
+  <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="/static/css/bootstrap.css" rel="stylesheet">
@@ -67,27 +67,22 @@
       <div id="sites" class="tab-pane fade in active">
         <div id="sitedetalhe" class="row">
           <div class="col-xs-8">
-            <form id="frmsite" action="/api/sites" method="post" enctype="text/plain">
-              <input type="hidden" id="id">
+            <form id="frmsite">
+              <input type="hidden" id="id" name="id">
               <div class="form-group">
                 <label for="title">Title:</label>
-                <input type="text" class="form-control" id="title">
+                <input type="text" class="form-control" id="title" name="title">
               </div>
               <div class="form-group">
                 <label for="url">URL:</label>
-                <input type="text" class="form-control" id="url">
+                <input type="text" class="form-control" id="url" name="url">
               </div>
-              <div class="col-xs-4">
+              <div class="col-xs-6">
                 <button class="btn btn-block btn-primary btn-default" id="btnsave">
                   <i class="fa fa-save"></i>&nbsp;Gravar
                 </button>
               </div>
-              <div class="col-xs-4">
-                <button class="btn btn-block btn-info" id="btnclear">
-                  <i class="fa fa-plus"></i>&nbsp;Novo
-                </button>
-              </div>
-              <div class="col-xs-4">
+              <div class="col-xs-6">
                 <button class="btn btn-block btn-danger" id="btndelete">
                   <i class="fa fa-trash"></i>&nbsp;Excluir
                 </button>
@@ -97,11 +92,17 @@
           <div class="col-xs-4" id="sitelist">
             <h3>Sites cadastrados:</h3>
             <div class="form-group">
-              <label for="url">Filtrar</label>
-              <input type="text" class="form-control" id="txtfilter">
-              <button class="btn" id="btnfilter">
-                <i class="fa fa-filter"></i>OK
-              </button>
+              <input type="text" class="form-control" id="txtfiltersites">
+              <div class="col-xs-6">
+                <button class="btn btn-default" id="btnfiltersites">
+                  <i class="fa fa-filter"></i>Filtrar
+                </button>
+              </div>
+              <div class="col-xs-6">
+                <button class="btn btn-" id="btncleanfiltersites">
+                  <i class="fa fa-eraser"></i>Limpar
+                </button>
+              </div>
             </div>
             <table class="table table-striped table-bordered table-hover table-responsive" cellspacing="0" cellpadding="0" id="sites_table">
               <tbody>
@@ -111,15 +112,55 @@
         </div>
       </div>
       <div id="produtos" class="tab-pane fade">
-        <div id="produtodetail" class="row">
-        </div>
-      </div>
-      <div id="bottom" class="row">
-        <div class="col-md-12">
-          Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+        <div id="produtodetalhe" class="row">
+          <div class="col-xs-8">
+            <form id="frmproduto">
+              <input type="hidden" id="idproduto" name="idproduto">
+              <div class="form-group">
+                <label for="descricao">Descrição:</label>
+                <input type="text" class="form-control" id="descricao" name="descricao">
+              </div>
+              <div class="col-xs-6">
+                <button class="btn btn-block btn-primary btn-default" id="btnsaveproduto">
+                  <i class="fa fa-save"></i>&nbsp;Gravar
+                </button>
+              </div>
+              <div class="col-xs-6">
+                <button class="btn btn-block btn-danger" id="btndeleteproduto">
+                  <i class="fa fa-trash"></i>&nbsp;Excluir
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="col-xs-4" id="produtolist">
+            <h3>Produtos cadastrados:</h3>
+            <div class="form-group">
+              <input type="text" class="form-control" id="txtfilterprodutos">
+              <div class="col-xs-6">
+                <button class="btn btn-default" id="btnfilterprodutos">
+                  <i class="fa fa-filter"></i>Filtrar
+                </button>
+              </div>
+              <div class="col-xs-6">
+                <button class="btn btn-" id="btncleanfilterprodutos">
+                  <i class="fa fa-eraser"></i>Limpar
+                </button>
+              </div>
+            </div>
+            <table class="table table-striped table-bordered table-hover table-responsive" cellspacing="0" cellpadding="0" id="produtos_table">
+              <tbody>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
+    <div id="bottom" class="row">
+      <div class="col-md-12">
+        Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+      </div>
+    </div>
+  </div>
   </div>
   <!-- /#bottom -->
   <script src="/static/js/jquery.js"></script>
@@ -130,117 +171,92 @@
       // Stop form from submitting normally
       event.preventDefault();
     });
-
-    $(document).on('click', '#btnsave', function () {
-
-      $('#jsonsuccess').hide();
-      $('#jsonerror').hide();
-
-      // Get some values from elements on the page:
-      var $form = $('#frmsites')
-      var formdata = {};
-      for (var i = 0, ii = $form.length; i < ii; ++i) {
-        var input = $form[i];
-        if (input.name) {
-          formdata[input.name] = input.value;
-        }
-      }
-      type = 'post';
-      mensagem = 'criado';
-      var url = $form.attr("action");
-      console.log("VAL: " + $("#id").val())
-      formdata = { 'title': $("#title").val(), 'url': $("#url").val() }
-      if ($("#id").val()) {
-        type = 'put';
-        mensagem = 'atualizado';
-        url = url + '/' + $("#id").val();
-        formdata = { 'id': $("#id").val(), 'title': $("#title").val(), 'url': $("#url").val() }
-        $("#id").val("");
-      }
-      console.log(formdata)
-      $.ajax({
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/vnd.api+json'
-        },
-        url: url,
-        data: JSON.stringify(formdata),
-        type: type,
-        enctype: $form.attr("enctype"),
-        dataType: 'json',
-        success: function (data) {
-          console.log(data);
-          console.log("ID: " + data["id"]);
-          $('#id').val(data["id"])
-          $('#success').empty().append("Site " + mensagem + ".")
-          $('#jsonsuccess').show();
-          list_filtered(null, $('#txtfilter').val());
-        },
-        error: function (data) {
-          console.log($form.attr("action"));
-          console.log(data.responseJSON);
-          $('#erro').empty().append(data.responseJSON["message"])
-          $('#jsonerror').show();
-        }
-      });
+    $("#frmproduto").submit(function (event) {
+      event.preventDefault();
     });
     $(document).on('click', '#sites_table tbody tr', function () {
-      console.log($(this).find('td').eq(0).text());
       id = $(this).find('td').eq(0).text();
       $.getJSON('/api/sites/' + id, null, function (data) {
-        console.log(data);
-        console.log(data.title);
         $("#id").val(data["id"]);
-        $('#title').val(data.title);
+        $('#title').val(data["title"]);
         $('#url').val(data['url']);
       });
     });
+    $(document).on('click', '#produtos_table tbody tr', function () {
+      id = $(this).find('td').eq(0).text();
+      $.getJSON('/api/produtos/' + id, null, function (data) {
+        $("#idproduto").val(data["id"]);
+        $('#descricao').val(data["descricao"]);
+      });
+    });
     $(document).ready(function () {
-        list_filtered();
+      list_filtered('sites', 'title');
+      list_filtered('produtos', 'descricao');
     });
-    $(document).on('click', '#btnfilter', function () {
-        list_filtered(null, $('#txtfilter').val());
+    $(document).on('click', '#btnfiltersites', function () {
+      list_filtered('sites', 'title', $('#txtfiltersites').val());
     });
-    $(document).on('click', '#btnclear', function () {
-        event.preventDefault();
-        clear_form();
+    $(document).on('click', '#btncleanfiltersites', function () {
+      $('#txtfilter').val('')
+      list_filtered('sites', 'title');
+    });
+    $(document).on('click', '#btnfilterprodutos', function () {
+      list_filtered('produtos', 'descricao', $('#txtfilterprodutos').val());
+    });
+    $(document).on('click', '#btncleanfilterprodutos', function () {
+      $('#txtfilterproduto').val('')
+      list_filtered('produtos', 'descricao');
+    });
+    $(document).on('click', '#btnsave', function () {
+      form = $('#frmsite');
+      form_save(form, 'sites');
+    });
+    $(document).on('click', '#btnsaveproduto', function () {
+      form = $('#frmproduto');
+      form_save(form, 'produtos');
     });
     $(document).on('click', '#btndelete', function () {
-            form = $('#frmsites');
-            url = '/api/sites';
-            one_id = $('#id').val();
-            delete_form_id(form, url, one_id);
+      form = $('#frmsite');
+      one_id = $('#id').val();
+      delete_form_id(form, 'sites', one_id);
     });
 
-    var list_filtered = function (e, filter) {
-      console.log(filter);
+    $(document).on('click', '#btndeleteproduto', function () {
+      form = $('#frmproduto');
+      one_id = $('#idproduto').val();
+      delete_form_id(form, 'produtos', one_id);
+    });
+
+    var list_filtered = function (classe, campo, filter) {
       params = null;
-      url = '/api/sites';
+      url = '/api/' + classe;
       if (filter) {
-        params = '{"filters": [{ "name": "title", "op": "like", "val": "%' + filter + '%"}]}'
+        params = '{"filters": [{ "name": "' + campo + '", "op": "like", "val": "%' + filter + '%"}]}'
         url = url + '?q=' + params
       }
+      console.log(params);
+      console.log(url);
       headers = { 'Content-Type': 'application/json' }
       $.getJSON(url, function (data) {
-        console.log(data);
-        console.log(url);
-        console.log(params);
-        $('#sites_table tbody tr').remove();
+        $('#' + classe + '_table tbody tr').remove();
         $.each(data.objects, function (i, item) {
           $('<tr>').append(
             $('<td>').text(item.id),
-            $('<td>').text(item.title)
-          ).appendTo('#sites_table');
+            $('<td>').text(item[campo])
+          ).appendTo('#' + classe + '_table');
         });
       });
       return false;
     };
-    var clear_form = function () {
-          $("#id").val('');
-          $('#title').val('');
-          $('#url').val('');
+    var clear_form = function (form) {
+      $.each(form[0].elements, function (index, formField) {
+        if (formField.name) {
+          $(formField).val('');
+        }
+      });
     };
-    var delete_form_id = function (form, url, one_id) {
+    var delete_form_id = function (form, classe, one_id) {
+      url = '/api/' + classe;
       $.ajax({
         headers: {
           'Content-Type': 'application/json',
@@ -248,14 +264,12 @@
         },
         url: url + '/' + one_id,
         type: 'delete',
-        enctype: form.attr("enctype"),
         dataType: 'json',
         success: function (data) {
-          console.log(data);
-          clear_form();
+          clear_form(form);
           $('#success').empty().append("Site excluído.")
           $('#jsonsuccess').show();
-          list_filtered(null, $('#txtfilter').val());
+          list_filtered(classe);
         },
         error: function (data) {
           console.log(data.responseJSON);
@@ -264,7 +278,57 @@
         }
       });
     }
-    
+    var form_save = function (form, classe) {
+      url = '/api/' + classe;
+      $('#jsonsuccess').hide();
+      $('#jsonerror').hide();
+      var formdata = {};
+      var cont = 0;
+      var primeiro_campo = '';
+      var campo_id = '';
+      $.each(form[0].elements, function (index, formField) {
+
+        if (formField.name) {
+          cont = cont + 1;
+          if (cont == 1) { campo_id = formField.name; }
+          else { formdata[formField.name] = $(formField).val(); }
+          if (cont == 2) { primeiro_campo = formField.name }
+        }
+      });
+      type = 'post';
+      mensagem = 'criado';
+      save_url = url
+      oid = $("#" + campo_id).val()
+      if (oid) {
+        type = 'put';
+        mensagem = 'atualizado';
+        save_url = save_url + '/' + oid;
+        $("#" + campo_id).val("");
+      }
+      $.ajax({
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.api+json'
+        },
+        url: save_url,
+        data: JSON.stringify(formdata),
+        type: type,
+        enctype: 'text/plain',
+        dataType: 'json',
+        success: function (data) {
+          clear_form(form);
+          $('#success').empty().append("Site " + mensagem + ".")
+          $('#jsonsuccess').show();
+          $('#txtfilter'+classe).val(data[primeiro_campo]);
+          list_filtered(classe, primeiro_campo, data[primeiro_campo]);
+        },
+        error: function (data) {
+          $('#erro').empty().append(data.responseJSON["message"])
+          $('#jsonerror').show();
+        }
+
+      });
+    }
 
   </script>
 </body>
