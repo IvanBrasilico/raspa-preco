@@ -12,7 +12,7 @@ Ver wiki para documentação
 ```
 git clone https://github.com/IvanBrasilico/raspa-preco.git
 cd raspa-preco
-Linux: sudo pip install virtualenv (caso ainda não tenha instalado)
+Linux: sudo pip3 install virtualenv (caso ainda não tenha instalado)
 Windows: pip install virtualenv (caso ainda não tenha instalado)
 python3 -m virtualenv venv
 Linux: . venv/bin/activate
