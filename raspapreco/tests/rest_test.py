@@ -55,6 +55,7 @@ class FlaskTestCase(unittest.TestCase):
         return fields['title']
 
     def _query(self, title):
+        headers = {'Content-Type': 'application/json'}
         filters = [dict(name='title', op='like', val='%' + title + '%')]
         params = dict(q=json.dumps(dict(filters=filters)))
         params = urlencode(params)
@@ -106,6 +107,7 @@ class FlaskTestCase(unittest.TestCase):
         return fields['descricao']
 
     def _queryproduto(self, descricao):
+        headers = {'Content-Type': 'application/json'}
         filters = [dict(name='descricao', op='like',
                         val='%' + descricao + '%')]
         params = dict(q=json.dumps(dict(filters=filters)))
