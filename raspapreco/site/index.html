@@ -166,14 +166,19 @@
                 <label for="descricao">Nome:</label>
                 <input type="text" class="form-control" id="nome" name="nome">
               </div>
-              <div class="col-xs-6">
+              <div class="col-xs-4">
                 <button class="btn btn-block btn-primary btn-default" id="btnsaveprocedimento">
                   <i class="fa fa-save"></i>&nbsp;Gravar
                 </button>
               </div>
-              <div class="col-xs-6">
+              <div class="col-xs-4">
                 <button class="btn btn-block btn-danger" id="btndeleteprocedimento">
                   <i class="fa fa-trash"></i>&nbsp;Excluir
+                </button>
+              </div>
+              <div class="col-xs-4">
+                <button class="btn btn-block btn-success" id="btndoprocedimento">
+                  <i class="fa fa-cloud-download"></i>&nbsp;Executar
                 </button>
               </div>
             </form>
@@ -294,21 +299,21 @@
       list_filtered('sites', 'title', $('#txtfiltersites').val());
     });
     $(document).on('click', '#btncleanfiltersites', function () {
-      $('#txtfilter').val('')
+      $('#txtfiltersites').val('')
       list_filtered('sites', 'title');
     });
     $(document).on('click', '#btnfilterprodutos', function () {
       list_filtered('produtos', 'descricao', $('#txtfilterprodutos').val());
     });
     $(document).on('click', '#btncleanfilterprodutos', function () {
-      $('#txtfilterproduto').val('')
+      $('#txtfilterprodutos').val('')
       list_filtered('produtos', 'descricao');
     });
     $(document).on('click', '#btnfilterprocedimentos', function () {
       list_filtered('procedimentos', 'nome', $('#txtfilterprocedimentos').val());
     });
     $(document).on('click', '#btncleanfilterprocedimentos', function () {
-      $('#txtfilterprocedimento').val('')
+      $('#txtfilterprocedimentos').val('')
       list_filtered('procedimentos', 'nome');
     });
     $(document).on('click', '#btnsave', function () {
@@ -327,17 +332,23 @@
     $(document).on('click', '#btndelete', function () {
       form = $('#frmsite');
       one_id = $('#id').val();
-      delete_form_id(form, 'sites', one_id);
+      delete_form_id(form, 'sites', one_id, 'title');
+      $('#txtfiltersites').val('')
     });
     $(document).on('click', '#btndeleteproduto', function () {
       form = $('#frmproduto');
       one_id = $('#idproduto').val();
-      delete_form_id(form, 'produtos', one_id);
+      delete_form_id(form, 'produtos', one_id, 'descricao');
+      $('#txtfilterprodutos').val('')
     });
     $(document).on('click', '#btndeleteprocedimento', function () {
       form = $('#frmprocedimento');
       one_id = $('#idprocedimento').val();
-      delete_form_id(form, 'procedimentos', one_id);
+      delete_form_id(form, 'procedimentos', one_id, 'nome');
+      $('#txtfilterprocedimentos').val('')
+    });
+    $(document).on('click', '#btndoprocedimento', function () {
+		window.open('/api/scrap/'+$('#idprocedimento').val(), '_blank');
     });
 
     $("#siteac").autocomplete({
@@ -422,7 +433,7 @@
         }
       });
     };
-    var delete_form_id = function (form, classe, one_id) {
+    var delete_form_id = function (form, classe, one_id, campo) {
       url = '/api/' + classe;
       $.ajax({
         headers: {
@@ -436,7 +447,7 @@
           clear_form(form);
           $('#success').empty().append("Site excluído.")
           $('#jsonsuccess').show();
-          list_filtered(classe);
+          list_filtered(classe, campo);
         },
         error: function (data) {
           console.log(data.responseJSON);

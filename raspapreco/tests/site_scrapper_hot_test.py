@@ -49,7 +49,6 @@ class TestScrap(unittest.TestCase):
         session.delete(proc)
         session.commit()
 
-
     def test_hot_scrap(self):
         self.set_up()
         proc = session.query(Procedimento).filter(

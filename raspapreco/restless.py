@@ -1,10 +1,11 @@
 import sys
 
 import flask_restless
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 from raspapreco.models.models import Procedimento, Produto, Site, session
+from raspapreco.utils.site_scraper import Scraper
 
 app = Flask(__name__)
 
@@ -18,6 +19,13 @@ if len(sys.argv) > 1:
             with open('raspapreco/site/index.html') as f:
                 home = f.read()
             return home
+
+        @app.route('/api/scrap/<procedimento>')
+        def scrap(procedimento):
+            proc = session.query(Procedimento).filter(Procedimento.id == procedimento).first()
+            scrap = Scraper(proc.sites, proc.produtos)
+            scrap.scrap()
+            return jsonify(scrap.scraped)
 
 # Create the Flask-Restless API manager.
 manager = flask_restless.APIManager(app, session=session)
