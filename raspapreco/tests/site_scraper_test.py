@@ -22,8 +22,8 @@ class TestModel(unittest.TestCase):
         mocker.get(requests_mock.ANY,
                    text='<span class="value" itemprop="price">21,45</a>' +
                    '<span class="value" itemprop="price">22,56</a>')
-        site = type('Site', (object, ), {'title': 'nowhere'})
-        produto = type('Produto', (object, ), {'descricao': 'bolsa'})
+        site = type('Site', (object, ), {'id': '1', 'title': 'nowhere'})
+        produto = type('Produto', (object, ), {'id': '2', 'descricao': 'bolsa feminina'})
         sites = [site]
         produtos = [produto]
         scrap = Scraper()
@@ -35,7 +35,7 @@ class TestModel(unittest.TestCase):
         site.title = 'aliexpress'
         scrap = Scraper(sites, produtos)
         scrap.scrap()
-        assert scrap.scraped.get(produto.descricao) is not None
-        result = scrap.scraped.get(produto.descricao).get(site.title)
+        assert scrap.scraped.get(produto.id) is not None
+        result = scrap.scraped.get(produto.id).get(site.id).get('preco')
         assert result is not None
         assert result == ['21,45', '22,56']

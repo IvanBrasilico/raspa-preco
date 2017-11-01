@@ -4,8 +4,12 @@ import flask_restless
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-from raspapreco.models.models import Procedimento, Produto, Site, session
+from raspapreco.models.models import (Base, MySession, Procedimento, Produto,
+                                      Site)
 from raspapreco.utils.site_scraper import Scraper
+
+mysession = MySession(Base)
+session = mysession.session()
 
 app = Flask(__name__)
 

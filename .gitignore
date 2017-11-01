@@ -106,3 +106,5 @@ ENV/
 bottery_core
 settings.py
 raspapreco/models/raspa.db
+
+raspapreco/modelsraspa\.db
