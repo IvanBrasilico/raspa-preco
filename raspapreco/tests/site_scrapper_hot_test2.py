@@ -1,13 +1,9 @@
 import unittest
 from datetime import date
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
                                       Produto, ProdutoEncontrado, Site)
-from raspapreco.utils.site_scraper import Scraper
+from raspapreco.utils.site_scraper import Scraper, extrai_valor
 
 mysession = MySession(Base, test=True)
 session = mysession.session()
@@ -65,7 +61,24 @@ class TestScrap(unittest.TestCase):
         # print(scrap.scraped)
         assert scrap.scraped != []
         dossie = Dossie(proc, date.today())
-        for k, v in scrap.scraped:
-            dossie
+        session.add(dossie)
+        session.commit()
+        for produto, d in scrap.scraped.items():
+            produto = session.query(Produto).filter(
+                Produto.id == produto).first()
+            for site, campos in d.items():
+                site = session.query(Site).filter(
+                    Site.id == site).first()
+                for ind in range(len(campos['url'])):
+                    produtoencontrado = ProdutoEncontrado(
+                        dossie,
+                        produto,
+                        site,
+                        descricao_site=campos['descricao'][ind],
+                        url=campos['url'][ind],
+                        preco=extrai_valor(campos['preco'][ind])
+                    )
+                    session.add(produtoencontrado)
+        session.commit()
 
         self.tear_down()

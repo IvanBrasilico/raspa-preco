@@ -1,5 +1,4 @@
 import unittest
-from unittest import mock
 
 import requests_mock
 
@@ -17,13 +16,15 @@ class TestModel(unittest.TestCase):
     # @mock.patch('raspapreco.utils.site_scraper.requests')
     @requests_mock.mock()
     def test_Scraper(self, mocker):
-        # html = type('Html', (object, ), {'text': '<span class="value" itemprop="price">21,45</a>'})
+        # html = type('Html', (object, ),
+        #  {'text': '<span class="value" itemprop="price">21,45</a>'})
         # requests.get.return_value.html = html
         mocker.get(requests_mock.ANY,
                    text='<span class="value" itemprop="price">21,45</a>' +
                    '<span class="value" itemprop="price">22,56</a>')
         site = type('Site', (object, ), {'id': '1', 'title': 'nowhere'})
-        produto = type('Produto', (object, ), {'id': '2', 'descricao': 'bolsa feminina'})
+        produto = type('Produto', (object, ), {
+                       'id': '2', 'descricao': 'bolsa feminina'})
         sites = [site]
         produtos = [produto]
         scrap = Scraper()

@@ -1,9 +1,4 @@
-import unittest
 from datetime import date
-
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
                                       Produto, ProdutoEncontrado, Site)

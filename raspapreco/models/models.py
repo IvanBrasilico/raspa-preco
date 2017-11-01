@@ -1,3 +1,4 @@
+"""DataBase models for raspapreco mod1"""
 import os
 
 from sqlalchemy import (Column, Date, ForeignKey, Integer, LargeBinary,
@@ -11,7 +12,8 @@ class MySession():
         if test:
             path = ':memory:'
         else:
-            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'raspa.db')
+            path = os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), 'raspa.db')
             if os.name != 'nt':
                 path = '/' + path
         self._engine = create_engine('sqlite:///' + path, convert_unicode=True)
@@ -74,13 +76,15 @@ class Produto(Base):
         'Procedimento',
         secondary=produto_procedimento,
         back_populates='produtos')
+    produtos_encontrados = relationship(
+        'ProdutoEncontrado', back_populates='produto')
 
     def __init__(self, descricao):
         self.descricao = descricao
 
 
 class Site(Base):
-    """Um site que será fonte de dados"""
+    """Um site que sera fonte de dados"""
     __tablename__ = 'sites'
     id = Column(Integer, primary_key=True)
     title = Column(String(20), unique=True)
@@ -89,6 +93,8 @@ class Site(Base):
         'Procedimento',
         secondary=site_procedimento,
         back_populates='sites')
+    produtos_encontrados = relationship(
+        'ProdutoEncontrado', back_populates='site')
 
     def __init__(self, title, url):
         self.title = title
@@ -117,7 +123,11 @@ class ProdutoEncontrado(Base):
     __tablename__ = 'produtosencontrados'
     id = Column(Integer, primary_key=True)
     produto_id = Column(Integer, ForeignKey('produtos.id'))
+    produto = relationship(
+        'Produto', back_populates='produtos_encontrados')
     site_id = Column(Integer, ForeignKey('sites.id'))
+    site = relationship(
+        'Site', back_populates='produtos_encontrados')
     dossie_id = Column(Integer, ForeignKey('dossies.id'))
     dossie = relationship(
         'Dossie', back_populates='produtos_encontrados')
@@ -133,6 +143,15 @@ class ProdutoEncontrado(Base):
         self.descricao_site = descricao_site
         self.url = url
         self.preco = preco
+
+    def to_dict(self):
+        return {'data': self.dossie.data,
+                'produto': self.produto.descricao,
+                'site': self.site.title,
+                'descricao_site': self.descricao_site,
+                'url': self.url,
+                'preco': self.preco
+                }
 
 
 if __name__ == '__main__':

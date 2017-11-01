@@ -67,8 +67,9 @@ class FlaskTestCase(unittest.TestCase):
         assert fields['objects'][0]['title'].lower().find(title.lower()) != -1
 
     def _put(self, siteid):
-        rv = self.app.put('/api/sites/' + str(siteid), data=json.dumps({'title': 'test2',
-                                                                        'url': 'url2'}),
+        rv = self.app.put('/api/sites/' + str(siteid),
+                          data=json.dumps({'title': 'test2',
+                                           'url': 'url2'}),
                           follow_redirects=True,
                           headers={'Content-Type': 'application/json'})
         fields = json.loads(rv.data.decode('utf-8'))
@@ -77,7 +78,8 @@ class FlaskTestCase(unittest.TestCase):
         return fields['id']
 
     def _delete(self, siteid):
-        rv = self.app.delete('/api/sites/' + str(siteid), follow_redirects=True,
+        rv = self.app.delete('/api/sites/' + str(siteid),
+                             follow_redirects=True,
                              headers={'Content-Type': 'application/json'})
         print(rv.data)
         # fields = json.loads(rv.data.decode("utf-8"))
@@ -91,7 +93,8 @@ class FlaskTestCase(unittest.TestCase):
         self._deleteproduto(produtoid)
 
     def _postproduto(self):
-        rv = self.app.post('/api/produtos', data=json.dumps({'descricao': 'test'}),
+        rv = self.app.post('/api/produtos',
+                           data=json.dumps({'descricao': 'test'}),
                            follow_redirects=True,
                            headers={'Content-Type': 'application/json'})
         fields = json.loads(rv.data.decode('utf-8'))
@@ -99,7 +102,8 @@ class FlaskTestCase(unittest.TestCase):
         return fields['id']
 
     def _getproduto(self, produtoid):
-        rv = self.app.get('/api/produtos/' + str(produtoid), follow_redirects=True,
+        rv = self.app.get('/api/produtos/' + str(produtoid),
+                          follow_redirects=True,
                           headers={'Content-Type': 'application/json'})
         fields = json.loads(rv.data.decode('utf-8'))
         assert produtoid == fields['id']
@@ -120,7 +124,8 @@ class FlaskTestCase(unittest.TestCase):
         assert fields['objects'][0]['descricao'].find(descricao) != -1
 
     def _putproduto(self, id):
-        rv = self.app.put('/api/produtos/' + str(id), data=json.dumps({'descricao': 'test2'}),
+        rv = self.app.put('/api/produtos/' + str(id),
+                          data=json.dumps({'descricao': 'test2'}),
                           follow_redirects=True,
                           headers={'Content-Type': 'application/json'})
         fields = json.loads(rv.data.decode('utf-8'))
@@ -128,7 +133,8 @@ class FlaskTestCase(unittest.TestCase):
         return fields['id']
 
     def _deleteproduto(self, produtoid):
-        rv = self.app.delete('/api/produtos/' + str(produtoid), follow_redirects=True,
+        rv = self.app.delete('/api/produtos/' + str(produtoid),
+                             follow_redirects=True,
                              headers={'Content-Type': 'application/json'})
         print(rv.data)
         # fields = json.loads(rv.data.decode("utf-8"))
@@ -148,7 +154,8 @@ class FlaskTestCase(unittest.TestCase):
         self._deleteprocedimento(id)
 
     def _postprocedimento(self):
-        rv = self.app.post('/api/procedimentos', data=json.dumps({'nome': 'test'}),
+        rv = self.app.post('/api/procedimentos',
+                           data=json.dumps({'nome': 'test'}),
                            follow_redirects=True,
                            headers={'Content-Type': 'application/json'})
         fields = json.loads(rv.data.decode('utf-8'))
@@ -156,7 +163,8 @@ class FlaskTestCase(unittest.TestCase):
         return fields['id']
 
     def _getprocedimento(self, id):
-        rv = self.app.get('/api/procedimentos/' + str(id), follow_redirects=True,
+        rv = self.app.get('/api/procedimentos/' + str(id),
+                          follow_redirects=True,
                           headers={'Content-Type': 'application/json'})
         fields = json.loads(rv.data.decode('utf-8'))
         assert id == fields['id']
@@ -176,7 +184,8 @@ class FlaskTestCase(unittest.TestCase):
         assert fields['objects'][0]['nome'].lower().find(campo.lower()) != -1
 
     def _putprocedimento(self, id):
-        rv = self.app.put('/api/procedimentos/' + str(id), data=json.dumps({'nome': 'test2'}),
+        rv = self.app.put('/api/procedimentos/' + str(id),
+                          data=json.dumps({'nome': 'test2'}),
                           follow_redirects=True,
                           headers={'Content-Type': 'application/json'})
         fields = json.loads(rv.data.decode('utf-8'))
@@ -206,7 +215,8 @@ class FlaskTestCase(unittest.TestCase):
         return fields['id']
 
     def _deleteprocedimento(self, id):
-        rv = self.app.delete('/api/procedimentos/' + str(id), follow_redirects=True,
+        rv = self.app.delete('/api/procedimentos/' + str(id),
+                             follow_redirects=True,
                              headers={'Content-Type': 'application/json'})
         print(rv.data)
         # fields = json.loads(rv.data.decode("utf-8"))

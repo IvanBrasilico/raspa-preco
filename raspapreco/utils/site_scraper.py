@@ -6,18 +6,21 @@ from bs4 import BeautifulSoup
 import raspapreco.localizations
 
 SCRAPY_DICT = \
-    {'aliexpress': {'url': 'https://pt.aliexpress.com/wholesale',
-                    'param_names': {'categoria': 'catId', 'descricao': 'SearchText'},
-                    'targets':
-                    {'preco': ('span', {'class': 'value', 'itemprop': 'price'}),
-                     'url': ('span', {'class': 'value', 'itemprop': 'price'}),
-                     'descricao': ('span', {'class': 'value', 'itemprop': 'price'}),
-                     'foto': ('span', {'class': 'value', 'itemprop': 'price'})
-                     }},
-     'other': {'url': 'https://',
-               'xpath': 'XPATH',  # or
-               'target': ('a', {'class': 'xxx', 'id': 'xxx', '...': 'xxx'})
-               }
+    {'aliexpress':
+     {'url': 'https://pt.aliexpress.com/wholesale',
+      'param_names':
+      {'categoria': 'catId', 'descricao': 'SearchText'},
+      'targets':
+      {'preco': ('span', {'class': 'value', 'itemprop': 'price'}),
+       'url': ('span', {'class': 'value', 'itemprop': 'price'}),
+       'descricao': ('span', {'class': 'value', 'itemprop': 'price'}),
+       'foto': ('span', {'class': 'value', 'itemprop': 'price'})
+       }},
+     'other':
+     {'url': 'https://',
+      'xpath': 'XPATH',  # or
+      'target': ('a', {'class': 'xxx', 'id': 'xxx', '...': 'xxx'})
+      }
      }
 
 
