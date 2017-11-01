@@ -137,5 +137,5 @@ class ProdutoEncontrado(Base):
 
 if __name__ == '__main__':
     asession = MySession(Base)
-    Base.metadata.drop_all(asession.engine)
-    Base.metadata.create_all(asession.engine)
+    Base.metadata.drop_all(asession.engine())
+    Base.metadata.create_all(asession.engine())
