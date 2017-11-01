@@ -59,15 +59,17 @@ class Executor():
         """
         html = None
         if self.dossie and self.dossie.produtos_encontrados:
-            html = '</table><thead><th>'
+            html = '<table><thead><th><tr>'
             for key in self.dossie.produtos_encontrados[0].to_dict():
                 html = html + '<td>' + key + '<td>'
 
-            html = html + '</th></thead><tbody><tr>'
+            html = html + '</tr></th></thead><tbody>'
 
             for produtoencontrado in self.dossie.produtos_encontrados:
+                html = html + '<tr>'
                 for key, value in produtoencontrado.to_dict().items():
                     html = html + '<td>' + str(value) + '<td>'
+                html = html + '</tr>'
 
-            html = html + '</tr></tbody></table>'
+            html = html + '</tbody></table>'
         return html

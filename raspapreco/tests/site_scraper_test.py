@@ -7,11 +7,12 @@ from raspapreco.utils.site_scraper import Scraper, make_floatlist
 
 class TestModel(unittest.TestCase):
     def test_make_floatlist(self):
-        test_list = ['R$ 27,45', '2.5', 'R$ 120,0 - 180']
-        assert_list = [27.45, 2.5, 120.]
+        test_list = ['R$ 27,45', '2.50', '2,70', 'R$ 120,0 - 180',
+                     'R$ 4.977,17', 'R$ 60,62  - R$ 65,00', '20,18 ']
+        assert_list = [27.45, 2.5, 2.7, 120., 4977.17, 60.62, 20.18]
         result_list, sum = make_floatlist(test_list)
         assert result_list == assert_list
-        assert sum == 149.95
+        assert sum == 5210.62
 
     # @mock.patch('raspapreco.utils.site_scraper.requests')
     @requests_mock.mock()

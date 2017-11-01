@@ -30,7 +30,7 @@ if len(sys.argv) > 1:
                 Procedimento.id == procedimento).first()
             executor = Executor(session, proc)
             executor.scrap()
-            return jsonify(executor.dossie_to_html_table())
+            return executor.dossie_to_html_table()
 
 # Create the Flask-Restless API manager.
 manager = flask_restless.APIManager(app, session=session)
