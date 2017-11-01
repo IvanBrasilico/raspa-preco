@@ -106,3 +106,13 @@ ENV/
 bottery_core
 settings.py
 raspapreco/models/raspa.db
+
+\.idea/misc\.xml
+
+\.idea/modules\.xml
+
+\.idea/raspa-preco\.iml
+
+\.idea/vcs\.xml
+
+\.idea/workspace\.xml
