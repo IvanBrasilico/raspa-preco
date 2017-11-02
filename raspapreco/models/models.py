@@ -1,5 +1,6 @@
 """DataBase models for raspapreco mod1"""
 import os
+from collections import OrderedDict
 
 from sqlalchemy import (Column, Date, ForeignKey, Integer, LargeBinary,
                         Numeric, String, Table, create_engine)
@@ -145,13 +146,13 @@ class ProdutoEncontrado(Base):
         self.preco = preco
 
     def to_dict(self):
-        return {'data': self.dossie.data,
-                'produto': self.produto.descricao,
-                'site': self.site.title,
-                'descricao_site': self.descricao_site,
-                'url': self.url,
-                'preco': self.preco
-                }
+        return OrderedDict({'data': self.dossie.data,
+                            'produto': self.produto.descricao,
+                            'site': self.site.title,
+                            'descricao_site': self.descricao_site,
+                            'url': self.url,
+                            'preco': self.preco
+                            })
 
 
 if __name__ == '__main__':

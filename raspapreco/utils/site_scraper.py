@@ -91,7 +91,7 @@ def extrai_valor(texto):
         texto = texto.replace(',', '.')
     else:
         texto = texto[:-4].replace('.', '') + \
-                texto[length - 4:].replace(',', '.')
+            texto[length - 4:].replace(',', '.')
     print(texto)
     return float(texto)
 
