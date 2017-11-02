@@ -3,7 +3,8 @@ from datetime import date
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
                                       Produto, ProdutoEncontrado, Site)
-from raspapreco.utils.executor import Executor
+
+from raspapreco.utils.dossie_manager import DossieManager
 
 mysession = MySession(Base, test=True)
 session = mysession.session()
@@ -38,7 +39,7 @@ class TestExecutor(unittest.TestCase):
             1.00)
         session.add(produtoencontrado)
         session.commit()
-        self.executor = Executor(session, dossie=dossie)
+        self.executor = DossieManager(session, dossie=dossie)
 
     def tear_down(self):
         Base.metadata.drop_all(engine)
@@ -46,5 +47,4 @@ class TestExecutor(unittest.TestCase):
     def test_executor(self):
         self.set_up()
         html = self.executor.dossie_to_html_table()
-
         assert html is not None

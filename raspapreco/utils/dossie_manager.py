@@ -6,7 +6,7 @@ from raspapreco.models.models import Dossie, Produto, ProdutoEncontrado, Site
 from raspapreco.utils.site_scraper import Scraper, extrai_valor
 
 
-class Executor():
+class DossieManager():
     """Executa scrap a partir de um procedimento, montando um dossie
     Dado um dossiê, retorna seus dados formatados
     """
@@ -16,7 +16,26 @@ class Executor():
         self._session = session
         self._dossie = dossie
 
-    def scrap(self):
+    @property
+    def dossie(self):
+        return self._dossie
+
+    @property
+    def procedimento(self):
+        return self._procedimento
+
+    @property
+    def session(self):
+        return self._session
+
+    @property
+    def ultimo_dossie(self):
+        if not self._procedimento:
+            return None
+        return self._procedimento.dossies[
+            len(self._procedimento.dossies - 1)]
+
+    def raspa(self, refaz=False):
         """Executa scrap a partir de um procedimento, montando um dossie
         Se procedimento ou session não forem passados, retorna None
         """
@@ -26,6 +45,9 @@ class Executor():
         proc = self._procedimento
         if proc is None:
             return None
+        if not refaz:
+            if proc.dossies:
+                return self.ultimo_dossie
         scrap = Scraper(proc.sites, proc.produtos)
         scrap.scrap()
         dossie = Dossie(self._procedimento, date.today())
@@ -49,10 +71,6 @@ class Executor():
                     session.add(produtoencontrado)
         session.commit()
         self._dossie = dossie
-        return self._dossie
-
-    @property
-    def dossie(self):
         return self._dossie
 
     def dossie_to_html_table(self):

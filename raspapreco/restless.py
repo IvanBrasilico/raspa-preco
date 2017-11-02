@@ -6,7 +6,7 @@ from flask_cors import CORS
 
 from raspapreco.models.models import (Base, MySession, Procedimento, Produto,
                                       Site)
-from raspapreco.utils.executor import Executor
+from raspapreco.utils.dossie_manager import DossieManager
 
 mysession = MySession(Base)
 session = mysession.session()
@@ -28,7 +28,7 @@ if len(sys.argv) > 1:
         def scrap(procedimento):
             proc = session.query(Procedimento).filter(
                 Procedimento.id == procedimento).first()
-            executor = Executor(session, proc)
+            executor = DossieManager(session, proc)
             executor.scrap()
             return executor.dossie_to_html_table()
 
