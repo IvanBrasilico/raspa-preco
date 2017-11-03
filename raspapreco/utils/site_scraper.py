@@ -44,7 +44,7 @@ class Scraper:
             for site in self.sites:
                 produtos_scrapy[site.id] = scrap_one(site, produto)
             self.scraped[produto.id] = produtos_scrapy
-            time.sleep(0.1)  # Prevent site blocking
+            time.sleep(0.2)  # Prevent site blocking
 
 
 def scrap_one(site, produto):

@@ -1,4 +1,5 @@
 import sys
+import time
 
 import flask_restless
 from flask import Flask, jsonify, url_for, redirect
@@ -8,6 +9,7 @@ from celery import Celery
 from raspapreco.models.models import (Base, MySession, Procedimento, Produto,
                                       Site)
 from raspapreco.utils.dossie_manager import DossieManager
+from raspapreco.utils.site_scraper import scrap_one
 
 mysession = MySession(Base)
 session = mysession.session()
@@ -25,11 +27,25 @@ def raspac(self, procedimento):
     """
     proc = session.query(Procedimento).filter(
         Procedimento.id == procedimento).first()
-    dossiemanager = DossieManager(session, proc)
+    total = len(proc.produtos) * len(proc.sites)
+    cont = 0
     self.update_state(state='PROGRESS',
-                      meta={'current': 0, 'total': 100,
-                            'status': 'Iniciado'})
-    dossiemanager.raspa()
+                      meta={'current': cont, 'total': total,
+                            'status': 'Raspando Sites...'})
+    scraped = {}
+    for produto in proc.produtos:
+        produtos_scrapy = {}
+        for site in proc.sites:
+            self.update_state(state='PROGRESS',
+                              meta={'current': cont, 'total': total,
+                                    'status': 'Raspando Sites...'})
+            produtos_scrapy[site.id] = scrap_one(site, produto)
+            cont += 1
+        scraped[produto.id] = produtos_scrapy
+        time.sleep(0.2)  # Prevent site blocking
+
+    dossiemanager = DossieManager(session, proc)
+    dossiemanager.monta_dossie(scraped)
     self.update_state(state='PROGRESS',
                       meta={'current': 100, 'total': 100,
                             'status': 'Quase',
@@ -68,7 +84,7 @@ if len(sys.argv) > 1:
 @app.route('/api/scrapc/<procedimento>')
 def scrapc(procedimento):
     task = raspac.delay(procedimento)
-    if app.config['DEBUG'] == True:
+    if app.config['DEBUG'] is True:
         return redirect(url_for('dossie') + '?task_id=' + task.id)
     else:
         return redirect('/raspapreco/dossie.html?task_id=' + task.id)

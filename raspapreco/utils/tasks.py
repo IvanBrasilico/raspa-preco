@@ -17,7 +17,7 @@ def raspac(self, procedimento):
     https://blog.miguelgrinberg.com/post/using-celery-with-flask
     """
     proc = session.query(Procedimento).filter(
-                Procedimento.id == procedimento).first()
+        Procedimento.id == procedimento).first()
     dossiemanager = DossieManager(session, proc)
 
     dossiemanager.raspa()

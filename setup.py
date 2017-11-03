@@ -23,7 +23,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'bs4',
-        'celery'
+        'celery',
         'certifi',
         'chardet',
         'flask',

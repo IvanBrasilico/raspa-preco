@@ -15,6 +15,7 @@ class DossieManager():
         self._procedimento = procedimento
         self._session = session
         self._dossie = dossie
+        self._scrap = None
 
     @property
     def dossie(self):
@@ -36,7 +37,8 @@ class DossieManager():
             len(self._procedimento.dossies) - 1]
 
     def raspa(self, refaz=False):
-        """Executa scrap a partir de um procedimento, montando um dossie
+        """Executa scrap a partir de um procedimento
+        Os dados da raspagem iniciarão os dados de um dossie
         Se procedimento ou session não forem passados, retorna None
         """
         session = self._session
@@ -49,12 +51,19 @@ class DossieManager():
             if proc.dossies:
                 self._dossie = self.ultimo_dossie
                 return self._dossie
-        scrap = Scraper(proc.sites, proc.produtos)
-        scrap.scrap()
+        self._scrap = Scraper(proc.sites, proc.produtos)
+        self._scrap.scrap()
+        self.monta_dossie(self._scrap.scraped)
+
+    def monta_dossie(self, scraped):
+        """Monta um dossie a partir do resultado de um scrap
+        Se procedimento ou session não forem passados, retorna None
+        """
+        session = self._session
         dossie = Dossie(self._procedimento, datetime.now())
         session.add(dossie)
         session.commit()
-        for produto, sites in scrap.scraped.items():
+        for produto, sites in scraped.items():
             produto = session.query(Produto).filter(
                 Produto.id == produto).first()
             for site, campos in sites.items():
