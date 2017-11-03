@@ -9,3 +9,4 @@ urllib3==1.22
 flask-cors
 flask-restless
 flask_sqlalchemy
+celery

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/jquery-ui.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header header">
+                <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#97bf8afda672ef73a836d55f018b43c868a97bb5"
+                    data-toggle="collapse" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <span class="navbar-brand">Raspa Preço</span>
+            </div>
+            <div class="navbar-collapse collapse" id="97bf8afda672ef73a836d55f018b43c868a97bb5">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/" title="Site">Brasilico's Site</a>
+                    </li>
+                    <li>
+                        <a href="/raspapreco/" title="Procedimento">Procedimento</a>
+                    </li>
+                    <li class="active">
+                        <a href="/raspapreco/dossie.html" title="Dossie">Dossiê</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible collapse" role="alert" id="jsonerror">
+            <button type="button" class="close" onclick="$('#jsonerror').hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <span>
+                <p>Erro na conexão ao Servidor!
+                    <span id="erro"></span>
+                </p>
+            </span>
+        </div>
+        <div class="alert alert-success alert-dismissible collapse" role="alert" id="jsonsuccess">
+            <button type="button" class="close" onclick="$('#jsonsuccess').hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <span>
+                <p>Sucesso:&nbsp;
+                    <span id="success"></span>
+                </p>
+            </span>
+        </div>
+        <ul id="rowTab" class="nav nav-tabs">
+            <li class="active">
+                <a data-toggle="tab" href="#dossies">Dossies</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="dossies" class="tab-pane fade in active">
+                <div id="dossiedetalhe" class="row">
+                    <div id="progress"></div>
+                    <div id="scraped"></div>
+                </div>
+            </div>
+            <div id="bottom" class="row">
+                <div class="col-md-12">
+                    Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#bottom -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/jquery-ui.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var sPageURL = decodeURIComponent(window.location.search.substring(1));
+            var sParams = sPageURL.split('=');
+            // alert('name:' + sParams[0] + 'value:' + sParams[1])
+            div = $('<div class="progress"><div></div><div>0%</div><div>...</div><div>&nbsp;</div></div><hr>');
+            $('#progress').append(div);
+            // create a progress bar
+            var nanobar = new Nanobar({
+                bg: '#44f',
+                target: div[0].childNodes[0]
+            });
+            status_url = '/api/scrapprogress/' + encodeURI(sParams[1])
+            update_progress(status_url, nanobar, div[0]);
+        });
+        function update_progress(status_url, nanobar, status_div) {
+            // send GET request to status URL
+            $.getJSON(status_url, function (data) {
+                // update UI
+                percent = parseInt(data['current'] * 100 / data['total']);
+                nanobar.go(percent);
+                $(status_div.childNodes[1]).text(percent + '%');
+                $(status_div.childNodes[2]).text(data['status']);
+                if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+                    if ('result' in data) {
+                        // show result
+                        console.log('result')
+                        console.log(data['state'])
+                        console.log(data['current'])
+                        console.log(data['total'])
+                        console.log(data['status'])
+                        console.log(data['result'])
+                        $(status_div.childNodes[3]).append(data['result']);
+                        $('#scraped').append(data['result'])
+                    }
+                    else {
+                        // something unexpected happened
+                        console.log('unexpected')
+                        console.log(data['state'])
+                        $(status_div.childNodes[3]).text('Result: ' + data['state']);
+                    }
+                }
+                else {
+                    // rerun in 2 seconds
+                    setTimeout(function () {
+                        update_progress(status_url, nanobar, status_div);
+                    }, 2000);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

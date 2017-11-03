@@ -19,6 +19,7 @@
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
         </button>
         <span class="navbar-brand">Raspa Preço</span>
       </div>
@@ -28,7 +29,10 @@
             <a href="/" title="Site">Brasilico's Site</a>
           </li>
           <li class="active">
-            <a href="/raspapreco/" title="Home">Home</a>
+            <a href="/raspapreco/" title="Procedimento">Procedimento</a>
+          </li>
+          <li>
+            <a href="/raspapreco/dossie.html" title="Dossie">Dossiê</a>
           </li>
         </ul>
       </div>
@@ -348,14 +352,14 @@
       $('#txtfilterprocedimentos').val('')
     });
     $(document).on('click', '#btndoprocedimento', function () {
-		window.open('/api/scrap/'+$('#idprocedimento').val(), '_blank');
+      window.open('/api/scrap/' + $('#idprocedimento').val(), '_blank');
     });
 
     $("#siteac").autocomplete({
       source: function (request, response) {
         url = '/api/sites';
         params = '{"filters": [{ "name": "title", "op": "like", "val": "%' + request.term + '%"}]}'
-        url = url + '?q=' + params;
+        url = url + '?q=' + encodeURIComponent(params);
         headers = { 'Content-Type': 'application/json' }
         $.getJSON(url, function (data) {
           console.log(data);
@@ -380,7 +384,7 @@
       source: function (request, response) {
         url = '/api/produtos';
         params = '{"filters": [{ "name": "descricao", "op": "like", "val": "%' + request.term + '%"}]}'
-        url = url + '?q=' + params;
+        url = url + '?q=' + encodeURIComponent(params);
         headers = { 'Content-Type': 'application/json' }
         $.getJSON(url, function (data) {
           console.log(data);
@@ -412,7 +416,7 @@
       url = '/api/' + classe;
       if (filter) {
         params = '{"filters": [{ "name": "' + campo + '", "op": "like", "val": "%' + filter + '%"}]}'
-        url = url + '?q=' + params
+        url = url + '?q=' + encodeURIComponent(params)
       }
       headers = { 'Content-Type': 'application/json' }
       $.getJSON(url, function (data) {

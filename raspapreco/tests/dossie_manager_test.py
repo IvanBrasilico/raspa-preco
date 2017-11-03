@@ -1,5 +1,5 @@
 import unittest
-from datetime import date
+from datetime import datetime
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
                                       Produto, ProdutoEncontrado, Site)
@@ -21,7 +21,7 @@ class TestExecutor(unittest.TestCase):
         procedimento = Procedimento('teste')
         session.add(procedimento)
         session.commit()
-        dossie = Dossie(procedimento, date.today())
+        dossie = Dossie(procedimento, datetime.now())
         session.add(dossie)
         session.commit()
         produto = Produto('produto')

@@ -2,7 +2,7 @@
 import os
 from collections import OrderedDict
 
-from sqlalchemy import (Column, Date, ForeignKey, Integer, LargeBinary,
+from sqlalchemy import (Column, DateTime, ForeignKey, Integer, LargeBinary,
                         Numeric, String, Table, create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
@@ -107,7 +107,7 @@ class Dossie(Base):
     data, refinado"""
     __tablename__ = 'dossies'
     id = Column(Integer, primary_key=True)
-    data = Column(Date)
+    data = Column(DateTime)
     procedimento_id = Column(Integer, ForeignKey('procedimentos.id'))
     procedimento = relationship('Procedimento', back_populates='dossies')
     produtos_encontrados = relationship(
@@ -134,7 +134,7 @@ class ProdutoEncontrado(Base):
         'Dossie', back_populates='produtos_encontrados')
     descricao_site = Column(String(200))
     url = Column(String(200))
-    preco = Column(Numeric)
+    preco = Column(Numeric(asdecimal=False))
     foto = Column(LargeBinary)
 
     def __init__(self, dossie, produto, site, descricao_site, url, preco):

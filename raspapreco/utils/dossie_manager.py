@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 
 from sqlalchemy import func
 
@@ -33,7 +33,7 @@ class DossieManager():
         if not self._procedimento:
             return None
         return self._procedimento.dossies[
-            len(self._procedimento.dossies - 1)]
+            len(self._procedimento.dossies) - 1]
 
     def raspa(self, refaz=False):
         """Executa scrap a partir de um procedimento, montando um dossie
@@ -47,10 +47,11 @@ class DossieManager():
             return None
         if not refaz:
             if proc.dossies:
-                return self.ultimo_dossie
+                self._dossie = self.ultimo_dossie
+                return self._dossie
         scrap = Scraper(proc.sites, proc.produtos)
         scrap.scrap()
-        dossie = Dossie(self._procedimento, date.today())
+        dossie = Dossie(self._procedimento, datetime.now())
         session.add(dossie)
         session.commit()
         for produto, sites in scrap.scraped.items():
