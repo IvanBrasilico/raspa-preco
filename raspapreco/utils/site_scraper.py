@@ -85,14 +85,11 @@ def extrai_valor(texto):
     texto = texto[pos_real:pos_hifen]
     texto = texto.strip()
     length = len(texto)
-    print('length', length)
-    print('texto antes' + texto + '*')
     if length <= 3:
         texto = texto.replace(',', '.')
     else:
         texto = texto[:-4].replace('.', '') + \
             texto[length - 4:].replace(',', '.')
-    print(texto)
     return float(texto)
 
 

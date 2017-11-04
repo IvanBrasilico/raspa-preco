@@ -29,6 +29,12 @@ def raspac(self, procedimento):
         Procedimento.id == procedimento).first()
     total = len(proc.produtos) * len(proc.sites)
     cont = 0
+    dossiemanager = DossieManager(session, proc)
+    dossiemanager.abre_dossie()
+    dossie = dossiemanager.dossie
+    dossie.task_id = self.request.id
+    session.merge(dossie)
+    session.commit()
     self.update_state(state='PROGRESS',
                       meta={'current': cont, 'total': total,
                             'status': 'Raspando Sites...'})
@@ -43,16 +49,18 @@ def raspac(self, procedimento):
             cont += 1
         scraped[produto.id] = produtos_scrapy
         time.sleep(0.2)  # Prevent site blocking
-
-    dossiemanager = DossieManager(session, proc)
     dossiemanager.monta_dossie(scraped)
-    self.update_state(state='PROGRESS',
+    dossie = dossiemanager.dossie
+    dossie.task_id = ''
+    session.merge(dossie)
+    session.commit()
+    self.update_state(state='SUCCESS',
                       meta={'current': 100, 'total': 100,
                             'status': 'Quase',
-                            'result': dossiemanager.dossie_to_html_table()})
+                            'result': {'id': dossie.id, 'data': dossie.data}})
     return {'current': 100, 'total': 100,
             'status': 'Finalizado',
-            'result': dossiemanager.dossie_to_html_table()}
+            'result': {'id': dossie.id, 'data': dossie.data}}
 
 
 if len(sys.argv) > 1:
@@ -81,13 +89,28 @@ if len(sys.argv) > 1:
             return executor.dossie_to_html_table()
 
 
+@app.route('/api/procedimentos/delete_children/<procedimento>')
+def delete_children(procedimento):
+    proc = session.query(Procedimento).filter(
+        Procedimento.id == procedimento).first()
+    proc.sites = []
+    proc.produtos = []
+    session.merge(proc)
+    session.commit()
+    return jsonify({'message': 'procedimento atualizado'}), 200
+
+
 @app.route('/api/scrapc/<procedimento>')
 def scrapc(procedimento):
-    task = raspac.delay(procedimento)
+    raspac.delay(procedimento)
+    proc = session.query(Procedimento).filter(
+        Procedimento.id == procedimento).first()
     if app.config['DEBUG'] is True:
-        return redirect(url_for('dossie') + '?task_id=' + task.id)
+        return redirect(url_for('dossie') + '?procedimento_id=' +
+                        str(proc.id))
     else:
-        return redirect('/raspapreco/dossie.html?task_id=' + task.id)
+        return redirect('/raspapreco/dossie.html?procedimento_id=' +
+                        str(proc.id))
 
 
 @app.route('/api/scrapprogress/<task_id>')

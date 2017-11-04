@@ -108,6 +108,9 @@ class Dossie(Base):
     __tablename__ = 'dossies'
     id = Column(Integer, primary_key=True)
     data = Column(DateTime)
+    # task_id estará preenchido apenas se produtos_econtrados
+    # do dossiê estiverem sendo preenchidos em background
+    task_id = Column(String(50))
     procedimento_id = Column(Integer, ForeignKey('procedimentos.id'))
     procedimento = relationship('Procedimento', back_populates='dossies')
     produtos_encontrados = relationship(

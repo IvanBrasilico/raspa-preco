@@ -55,14 +55,25 @@ class DossieManager():
         self._scrap.scrap()
         self.monta_dossie(self._scrap.scraped)
 
+    def abre_dossie(self):
+        """Monta um dossie a partir do resultado de um scrap
+        Se procedimento ou session não forem passados, retorna None
+        """
+        if not self._procedimento:
+            raise AttributeError(
+                'Não há procedimento definido para iniciar dossiê')
+        session = self._session
+        self._dossie = Dossie(self._procedimento, datetime.now())
+        session.add(self._dossie)
+        session.commit()
+
     def monta_dossie(self, scraped):
         """Monta um dossie a partir do resultado de um scrap
         Se procedimento ou session não forem passados, retorna None
         """
+        if not self._dossie:
+            raise AttributeError('Não há dossiê definido para iniciar')
         session = self._session
-        dossie = Dossie(self._procedimento, datetime.now())
-        session.add(dossie)
-        session.commit()
         for produto, sites in scraped.items():
             produto = session.query(Produto).filter(
                 Produto.id == produto).first()
@@ -71,7 +82,7 @@ class DossieManager():
                     Site.id == site).first()
                 for ind in range(len(campos['url'])):
                     produtoencontrado = ProdutoEncontrado(
-                        dossie,
+                        self._dossie,
                         produto,
                         site,
                         descricao_site=campos['descricao'][ind],
@@ -80,7 +91,6 @@ class DossieManager():
                     )
                     session.add(produtoencontrado)
         session.commit()
-        self._dossie = dossie
         return self._dossie
 
     def dossie_to_html_table(self):
