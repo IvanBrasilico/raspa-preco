@@ -1,6 +1,6 @@
 from celery import Celery
 
-from raspapreco.models.models import (Base, MySession, Procedimento)
+from raspapreco.models.models import Base, MySession, Procedimento
 from raspapreco.utils.dossie_manager import DossieManager
 
 mysession = MySession(Base)

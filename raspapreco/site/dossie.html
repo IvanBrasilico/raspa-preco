@@ -98,7 +98,25 @@
                             </table>
                         </div>
                     </div>
-                    <div id="scraped"></div>
+                    <!-- Modal -->
+                    <div class="container" id="scraped">
+                        <div class="modal fade" id="myModal" role="dialog">
+                            <div class="modal-dialog">
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Resultados do dossiê</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -146,6 +164,8 @@
                         $('<tr>').append(
                             $('<td>').text(dossie.id),
                             $('<td>').text(dossie.data),
+                            $('<td>').html('<button type="button" class="btn btn-info btn-lg" data- toggle="modal"' +
+                                ' data- target="#myModal" > Ver conteúdo</button > ')
                         ).appendTo('#dossies_table');
                     } else {
                         div = $('<div class="progress"><div></div><div>0%</div><div>...</div><div>&nbsp;</div></div><hr>');
@@ -180,7 +200,8 @@
                         $('<tr>').append(
                             $('<td>').text(data['result']['id']),
                             $('<td>').text(data['result']['data']),
-                        ).insertBefore('#dossies_table > tbody > tr:first');
+                            $('<td>').html('<a href="/api/dossietable/' + data['result']['id'] + '">Ver conteúdo</a>')
+                        ).appendTo('#dossies_table');
                         console.log(data['result'])
                     }
                     else {

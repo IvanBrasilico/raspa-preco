@@ -1,13 +1,14 @@
 import sys
 import time
+from datetime import datetime
 
 import flask_restless
-from flask import Flask, jsonify, url_for, redirect
-from flask_cors import CORS
 from celery import Celery
+from flask import Flask, jsonify, redirect, url_for
+from flask_cors import CORS
 
-from raspapreco.models.models import (Base, MySession, Procedimento, Produto,
-                                      Site)
+from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
+                                      Produto, Site)
 from raspapreco.utils.dossie_manager import DossieManager
 from raspapreco.utils.site_scraper import scrap_one
 
@@ -21,20 +22,16 @@ celery = Celery(app.name, broker='pyamqp://guest@localhost//',
 
 
 @celery.task(bind=True)
-def raspac(self, procedimento):
+def raspac(self, dossie_id):
     """Background task that runs a long function with progress reports.
     https://blog.miguelgrinberg.com/post/using-celery-with-flask
     """
-    proc = session.query(Procedimento).filter(
-        Procedimento.id == procedimento).first()
+    dossie = session.query(Dossie).filter(
+        Dossie.id == dossie_id).first()
+    proc = dossie.procedimento
     total = len(proc.produtos) * len(proc.sites)
     cont = 0
-    dossiemanager = DossieManager(session, proc)
-    dossiemanager.abre_dossie()
-    dossie = dossiemanager.dossie
-    dossie.task_id = self.request.id
-    session.merge(dossie)
-    session.commit()
+    dossiemanager = DossieManager(session, proc, dossie)
     self.update_state(state='PROGRESS',
                       meta={'current': cont, 'total': total,
                             'status': 'Raspando Sites...'})
@@ -49,15 +46,11 @@ def raspac(self, procedimento):
             cont += 1
         scraped[produto.id] = produtos_scrapy
         time.sleep(0.2)  # Prevent site blocking
-    dossiemanager.monta_dossie(scraped)
+    dossiemanager.raspa(scraped)
     dossie = dossiemanager.dossie
     dossie.task_id = ''
     session.merge(dossie)
     session.commit()
-    self.update_state(state='SUCCESS',
-                      meta={'current': 100, 'total': 100,
-                            'status': 'Quase',
-                            'result': {'id': dossie.id, 'data': dossie.data}})
     return {'current': 100, 'total': 100,
             'status': 'Finalizado',
             'result': {'id': dossie.id, 'data': dossie.data}}
@@ -74,8 +67,8 @@ if len(sys.argv) > 1:
                 home = f.read()
             return home
 
-        @app.route('/api/dossie')
-        def dossie():
+        @app.route('/api/dossie_home')
+        def dossie_home():
             with open('raspapreco/site/dossie.html') as f:
                 fdossie = f.read()
             return fdossie
@@ -102,11 +95,16 @@ def delete_children(procedimento):
 
 @app.route('/api/scrapc/<procedimento>')
 def scrapc(procedimento):
-    raspac.delay(procedimento)
     proc = session.query(Procedimento).filter(
         Procedimento.id == procedimento).first()
+    dossiemanager = DossieManager(session, proc)
+    dossie = dossiemanager.inicia_dossie()
+    task = raspac.delay(procedimento)
+    dossie.task_id = task.id
+    session.add(dossie)
+    session.commit()
     if app.config['DEBUG'] is True:
-        return redirect(url_for('dossie') + '?procedimento_id=' +
+        return redirect(url_for('dossie_home') + '?procedimento_id=' +
                         str(proc.id))
     else:
         return redirect('/raspapreco/dossie.html?procedimento_id=' +
@@ -141,6 +139,15 @@ def scrapprogress(task_id):
             'status': str(task.info),  # this is the exception raised
         }
     return jsonify(response)
+
+@app.route('/api/dossietable/<dossie_id>')
+def dossie_table(dossie_id):
+    dossie = session.query(Dossie).filter(
+    Dossie.id == dossie_id).first()
+    dossiemanager = DossieManager(session, dossie=dossie)
+    return dossiemanager.dossie_to_html_table()
+
+
 
 
 # Create the Flask-Restless API manager.

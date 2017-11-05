@@ -15,7 +15,7 @@ class DossieManager():
         self._procedimento = procedimento
         self._session = session
         self._dossie = dossie
-        self._scrap = None
+        self._scraped = None
 
     @property
     def dossie(self):
@@ -36,7 +36,15 @@ class DossieManager():
         return self._procedimento.dossies[
             len(self._procedimento.dossies) - 1]
 
-    def raspa(self, refaz=False):
+    def inicia_dossie(self):
+        if self._dossie is None:
+            if self._procedimento.dossies:
+                self._dossie = self.ultimo_dossie
+        if self._dossie is None:
+            self._dossie = Dossie(self._procedimento, datetime.now())
+        return self._dossie
+
+    def raspa(self, scraped=None):
         """Executa scrap a partir de um procedimento
         Os dados da raspagem iniciarão os dados de um dossie
         Se procedimento ou session não forem passados, retorna None
@@ -47,34 +55,23 @@ class DossieManager():
         proc = self._procedimento
         if proc is None:
             return None
-        if not refaz:
-            if proc.dossies:
-                self._dossie = self.ultimo_dossie
-                return self._dossie
-        self._scrap = Scraper(proc.sites, proc.produtos)
-        self._scrap.scrap()
-        self.monta_dossie(self._scrap.scraped)
+        self.inicia_dossie()
+        if scraped:
+            self._scraped = scraped
+        else:
+            scrap = Scraper(proc.sites, proc.produtos)
+            scrap.scrap()
+            self._scraped = scrap.scraped
+        self.monta_dossie()
 
-    def abre_dossie(self):
-        """Monta um dossie a partir do resultado de um scrap
-        Se procedimento ou session não forem passados, retorna None
-        """
-        if not self._procedimento:
-            raise AttributeError(
-                'Não há procedimento definido para iniciar dossiê')
-        session = self._session
-        self._dossie = Dossie(self._procedimento, datetime.now())
-        session.add(self._dossie)
-        session.commit()
-
-    def monta_dossie(self, scraped):
+    def monta_dossie(self):
         """Monta um dossie a partir do resultado de um scrap
         Se procedimento ou session não forem passados, retorna None
         """
         if not self._dossie:
             raise AttributeError('Não há dossiê definido para iniciar')
         session = self._session
-        for produto, sites in scraped.items():
+        for produto, sites in self._scraped.items():
             produto = session.query(Produto).filter(
                 Produto.id == produto).first()
             for site, campos in sites.items():
@@ -97,9 +94,9 @@ class DossieManager():
         """Dado um dossiê, retorna seus dados formatados
         Se dossie não fornecido ou vazio, retorna None
         """
-        html = None
+        result = None
         if self.dossie and self.dossie.produtos_encontrados:
-            html = self.tabelaresumo()
+            result['resumo'] = self.tabelaresumo()
 
             tablehead = '<table><thead><th><tr>'
             for key in self.dossie.produtos_encontrados[0].to_dict():
@@ -107,7 +104,7 @@ class DossieManager():
             tablehead = tablehead + '</tr></th></thead>'
 
             for produto in self.dossie.procedimento.produtos:
-                html = html + '<hr>&nbsp;'
+                html = '<hr>&nbsp;'
                 html = html + '<h3>' + produto.descricao + '<h3>'
                 html = html + tablehead + '<tbody>'
                 q = self._session. \
@@ -121,8 +118,9 @@ class DossieManager():
                         html = html + '<td>' + str(value) + '<td>'
                     html = html + '</tr>'
                 html = html + '</tbody></table>'
+                result[produto.descricao] = html
 
-        return html
+        return result
 
     def tabelaresumo(self):
         """Dado um dossiê, retorna tabela resumo de preços dos

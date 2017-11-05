@@ -3,7 +3,6 @@ from datetime import datetime
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
                                       Produto, ProdutoEncontrado, Site)
-
 from raspapreco.utils.dossie_manager import DossieManager
 
 mysession = MySession(Base, test=True)
