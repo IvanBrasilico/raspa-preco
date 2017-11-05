@@ -27,6 +27,7 @@ setup(
         'flask_restless',
         'flask_sqlalchemy',
         'idna',
+        'json-tricks',
         'requests',
         'SQLAlchemy',
         'urllib3'

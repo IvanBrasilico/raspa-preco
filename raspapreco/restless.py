@@ -6,6 +6,7 @@ import flask_restless
 from celery import Celery
 from flask import Flask, jsonify, redirect, url_for
 from flask_cors import CORS
+from json_tricks import dumps
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
                                       Produto, Site)
@@ -140,14 +141,13 @@ def scrapprogress(task_id):
         }
     return jsonify(response)
 
+
 @app.route('/api/dossietable/<dossie_id>')
 def dossie_table(dossie_id):
     dossie = session.query(Dossie).filter(
-    Dossie.id == dossie_id).first()
+        Dossie.id == dossie_id).first()
     dossiemanager = DossieManager(session, dossie=dossie)
-    return dossiemanager.dossie_to_html_table()
-
-
+    return dumps(dossiemanager.dossie_to_html_table())
 
 
 # Create the Flask-Restless API manager.

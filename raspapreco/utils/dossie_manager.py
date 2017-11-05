@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime
 
 from sqlalchemy import func
@@ -96,17 +97,18 @@ class DossieManager():
         """
         result = None
         if self.dossie and self.dossie.produtos_encontrados:
-            result['resumo'] = self.tabelaresumo()
+            result = OrderedDict()
+            result['Resumo'] = self.tabelaresumo()
 
-            tablehead = '<table><thead><th><tr>'
+            tablehead = '<table class="table table-striped table-bordered' + \
+                ' table-responsive"><thead><th><tr>'
+            tableheadtr = ''
             for key in self.dossie.produtos_encontrados[0].to_dict():
-                tablehead = tablehead + '<td>' + key + '<td>'
-            tablehead = tablehead + '</tr></th></thead>'
+                tableheadtr = tableheadtr + '<td>' + key + '</td>'
+            tablehead = tablehead + tableheadtr + '</tr></th></thead><tbody>'
 
             for produto in self.dossie.procedimento.produtos:
-                html = '<hr>&nbsp;'
-                html = html + '<h3>' + produto.descricao + '<h3>'
-                html = html + tablehead + '<tbody>'
+                html = ''
                 q = self._session. \
                     query(ProdutoEncontrado). \
                     filter(ProdutoEncontrado.produto_id == produto.id). \
@@ -114,10 +116,11 @@ class DossieManager():
                     all()
                 for produtoencontrado in q:
                     html = html + '<tr>'
+                    linha = ''
                     for key, value in produtoencontrado.to_dict().items():
-                        html = html + '<td>' + str(value) + '<td>'
-                    html = html + '</tr>'
-                html = html + '</tbody></table>'
+                        linha = linha + '<td>' + str(value) + '</td>'
+                    html = html + linha + '</tr>'
+                html = tablehead + html + '</tbody></table>'
                 result[produto.descricao] = html
 
         return result
@@ -131,7 +134,8 @@ class DossieManager():
         if self.dossie and self.dossie.produtos_encontrados:
             tabelaresumo = '<tbody>'
 
-            tablehead = '<table><thead><th><tr><td>-</td>'
+            tablehead = '<table class="table table-striped table-bordered ' + \
+                'table-responsive"><thead><th><tr><td>-</td>'
             for site in self.dossie.procedimento.sites:
                 tablehead = tablehead + '<td>' + site.title + '<td>'
             tablehead = tablehead + '<td>Total</td></tr></th></thead>'
