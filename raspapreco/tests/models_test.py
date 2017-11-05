@@ -1,22 +1,26 @@
 import unittest
+from datetime import date
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-
-from raspapreco.models.models import Procedimento, Produto, Site
+from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
+                                      Produto, ProdutoEncontrado, Site)
 
 
 class TestModel(unittest.TestCase):
     def set_up(self):
-        self.engine = create_engine('sqlite:///:memory:')
+        mysession = MySession(Base, test=True)
+        self.session = mysession.session()
+        self.engine = mysession.engine()
+        Base.metadata.create_all(self.engine)
+
+        """self.engine = create_engine('sqlite:///:memory:')
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
         self.Base = declarative_base()
         self.Base.metadata.create_all(self.engine)
+        """
 
     def tear_down(self):
-        self.Base.metadata.drop_all(self.engine)
+        Base.metadata.drop_all(self.engine)
 
     def test_procedimento(self):
         self.set_up()
@@ -68,3 +72,27 @@ class TestModel(unittest.TestCase):
         self.session.commit()
         assert len(procedimento.produtos) == 1
         self.tear_down()
+
+    def test_dossie(self):
+        self.set_up()
+        procedimento = Procedimento('teste')
+        data = date(2017, 10, 31)
+        dossie = Dossie(procedimento, data)
+        self.session.commit()
+        assert dossie.procedimento_id == procedimento.id
+        assert dossie.data == data
+        self.tear_down()
+
+    def test_produtoencontrado(self):
+        self.set_up()
+        procedimento = Procedimento('teste')
+        dossie = Dossie(procedimento, '2017-10-31')
+        produto = Produto('teste')
+        site = Site('teste', 'url')
+        produtoencontrado = ProdutoEncontrado(
+            dossie, produto, site, 'teste', 'www.teste', 1.00)
+        self.session.commit()
+        assert produtoencontrado.dossie_id == dossie.id
+        assert produtoencontrado.descricao_site == 'teste'
+        assert produtoencontrado.url == 'www.teste'
+        assert produtoencontrado.preco == 1.00

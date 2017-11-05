@@ -19,6 +19,7 @@
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
         </button>
         <span class="navbar-brand">Raspa Preço</span>
       </div>
@@ -28,7 +29,10 @@
             <a href="/" title="Site">Brasilico's Site</a>
           </li>
           <li class="active">
-            <a href="/raspapreco/" title="Home">Home</a>
+            <a href="/raspapreco/" title="Procedimento">Procedimento</a>
+          </li>
+          <li>
+            <a href="/raspapreco/dossie.html" title="Dossie">Dossiê</a>
           </li>
         </ul>
       </div>
@@ -328,6 +332,8 @@
       table_save();
       form = $('#frmprocedimento');
       form_save(form, 'procedimentos');
+      $('#siteac_table tbody tr').remove();
+      $('#produtoac_table tbody tr').remove();
     });
     $(document).on('click', '#btndelete', function () {
       form = $('#frmsite');
@@ -346,16 +352,18 @@
       one_id = $('#idprocedimento').val();
       delete_form_id(form, 'procedimentos', one_id, 'nome');
       $('#txtfilterprocedimentos').val('')
+      $('#siteac_table tbody tr').remove();
+      $('#produtoac_table tbody tr').remove();
     });
     $(document).on('click', '#btndoprocedimento', function () {
-		window.open('/api/scrap/'+$('#idprocedimento').val(), '_blank');
+      window.open('/api/scrapc/' + $('#idprocedimento').val(), '_blank');
     });
 
     $("#siteac").autocomplete({
       source: function (request, response) {
         url = '/api/sites';
         params = '{"filters": [{ "name": "title", "op": "like", "val": "%' + request.term + '%"}]}'
-        url = url + '?q=' + params;
+        url = url + '?q=' + encodeURIComponent(params);
         headers = { 'Content-Type': 'application/json' }
         $.getJSON(url, function (data) {
           console.log(data);
@@ -380,7 +388,7 @@
       source: function (request, response) {
         url = '/api/produtos';
         params = '{"filters": [{ "name": "descricao", "op": "like", "val": "%' + request.term + '%"}]}'
-        url = url + '?q=' + params;
+        url = url + '?q=' + encodeURIComponent(params);
         headers = { 'Content-Type': 'application/json' }
         $.getJSON(url, function (data) {
           console.log(data);
@@ -412,7 +420,7 @@
       url = '/api/' + classe;
       if (filter) {
         params = '{"filters": [{ "name": "' + campo + '", "op": "like", "val": "%' + filter + '%"}]}'
-        url = url + '?q=' + params
+        url = url + '?q=' + encodeURIComponent(params)
       }
       headers = { 'Content-Type': 'application/json' }
       $.getJSON(url, function (data) {
@@ -510,6 +518,7 @@
     var table_save = function () {
       $('#jsonerror').hide();
       url = '/api/procedimentos';
+      deleteurl = '/api/procedimentos/delete_children';
       oid = $("#idprocedimento").val()
       console.log(oid);
       if (oid) {
@@ -522,9 +531,25 @@
           dataprodutos.push({ "id": $(this).text() });
         });
         data = {
-          'produtos': { 'add': dataprodutos },
-          'sites': { 'add': datasites }
+          'produtos': {'add': dataprodutos},
+          'sites': {'add': datasites}
         }
+        deleteurl = deleteurl + '/' + oid;
+        $.ajax({
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.api+json'
+          },
+          url: deleteurl,
+          type: 'get',
+          success: function (data) {
+            console.log(data);
+          },
+          error: function (data) {
+            $('#erro').empty().append(data.responseJSON["message"])
+            $('#jsonerror').show();
+          }
+        });
         save_url = url + '/' + oid;
         $.ajax({
           headers: {

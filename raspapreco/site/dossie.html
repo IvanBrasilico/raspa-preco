@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <!-- <link href="/static/css/bootstrap.css" rel="stylesheet"> -->
+    <link href="/static/css/jquery-ui.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header header">
+                <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#97bf8afda672ef73a836d55f018b43c868a97bb5"
+                    data-toggle="collapse" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <span class="navbar-brand">Raspa Preço</span>
+            </div>
+            <div class="navbar-collapse collapse" id="97bf8afda672ef73a836d55f018b43c868a97bb5">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/" title="Site">Brasilico's Site</a>
+                    </li>
+                    <li>
+                        <a href="/raspapreco/" title="Procedimento">Procedimento</a>
+                    </li>
+                    <li class="active">
+                        <a href="/raspapreco/dossie.html" title="Dossie">Dossiê</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible collapse" role="alert" id="jsonerror">
+            <button type="button" class="close" onclick="$('#jsonerror').hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <span>
+                <p>Erro na conexão ao Servidor!
+                    <span id="erro"></span>
+                </p>
+            </span>
+        </div>
+        <div class="alert alert-success alert-dismissible collapse" role="alert" id="jsonsuccess">
+            <button type="button" class="close" onclick="$('#jsonsuccess').hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <span>
+                <p>Sucesso:&nbsp;
+                    <span id="success"></span>
+                </p>
+            </span>
+        </div>
+        <ul id="rowTab" class="nav nav-tabs">
+            <li class="active">
+                <a data-toggle="tab" href="#dossies">Dossies</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="dossies" class="tab-pane fade in active">
+                <div id="dossiedetalhe" class="row">
+                    <h3>Procedimento</h3>
+                    <div id="procedimento">
+                        <p>Número 1 Nome teste</p>
+                    </div>
+                    <div id="accordion">
+                        <h3>Detalhes do procedimento</h3>
+                        <div id="sitesprodutos">
+                            <div class="col-xs-6">
+                                <table class="table table-striped table-bordered table-responsive" cellspacing="0" cellpadding="0" id="sites_table">
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-6">
+                                <table class="table table-striped table-bordered table-responsive" cellspacing="0" cellpadding="0" id="produtos_table">
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <h3>Dossiês</h3>
+                        <div id="dossiesprocedimento">
+                            <div id="progress"></div>
+                            <table class="table table-striped table-bordered table-responsive" cellspacing="0" cellpadding="0" id="dossies_table">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Resultados do dossiê</h4>
+                    </div>
+                    <div class="modal-body" id="conteudodossie">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="bottom" class="row">
+            <div class="col-md-12">
+                Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+            </div>
+        </div>
+    </div>
+    <!-- /#bottom -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
+    <script src="/static/js/jquery.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <!-- <script src="/static/js/bootstrap.js"></script> -->
+    <script src="/static/js/jquery-ui.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var sPageURL = decodeURIComponent(window.location.search.substring(1));
+            var sParams = sPageURL.split('=');
+            var id = sParams[1];
+            // TODO: alert if idprocedimento not passed
+            // alert('name:' + sParams[0] + 'value:' + sParams[1])
+            $.getJSON('/api/procedimentos/' + id, null, function (data) {
+                $("#idprocedimento").val(data["id"]);
+                $('#nome').val(data["nome"]);
+                $('#sites_table tbody tr').remove();
+                $.each(data["sites"], function (i, site) {
+                    $('<tr>').append(
+                        $('<td>').text(site.id),
+                        $('<td>').text(site.title),
+                    ).appendTo('#sites_table');
+                });
+                $('#produtos_table tbody tr').remove();
+                $.each(data["produtos"], function (i, produto) {
+                    $('<tr>').append(
+                        $('<td>').text(produto.id),
+                        $('<td>').text(produto.descricao),
+                    ).appendTo('#produtos_table');
+                });
+                $('#dossies_table tbody tr').remove();
+                $.each(data["dossies"], function (i, dossie) {
+                    if (dossie.task_id == '') {
+                        $('<tr>').append(
+                            $('<td>').text(dossie.id),
+                            $('<td>').text(dossie.data),
+                            $('<td>').html('<button type="button" class="btn btn-info btn-lg" ' +
+                                ' onclick="verConteudoDossie(' + dossie.id + ')" > Ver conteúdo</button > ')
+                        ).appendTo('#dossies_table');
+                    } else {
+                        div = $('<div class="progress"><div></div><div>0%</div><div>...</div><div>&nbsp;</div></div><hr>');
+                        $('#progress').append(div);
+                        // create a progress bar
+                        var nanobar = new Nanobar({
+                            bg: '#44f',
+                            target: div[0].childNodes[0]
+                        });
+                        status_url = '/api/scrapprogress/' + encodeURI(dossie.task_id)
+                        update_progress(status_url, nanobar, div[0]);
+                    }
+                });
+            });
+        });
+        function update_progress(status_url, nanobar, status_div) {
+            // send GET request to status URL
+            $.getJSON(status_url, function (data) {
+                // update UI
+                percent = parseInt(data['current'] * 100 / data['total']);
+                nanobar.go(percent);
+                $(status_div.childNodes[1]).text(percent + '%');
+                $(status_div.childNodes[2]).text(data['status']);
+                if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+                    if ('result' in data) {
+                        // show result
+                        console.log('result')
+                        console.log(data['state'])
+                        console.log(data['current'])
+                        console.log(data['total'])
+                        console.log(data['status'])
+                        $('<tr>').append(
+                            $('<td>').text(data['result']['id']),
+                            $('<td>').text(data['result']['data']),
+                            $('<td>').html('<a href="/api/dossietable/' + data['result']['id'] + '">Ver conteúdo</a>')
+                        ).appendTo('#dossies_table');
+                        console.log(data['result'])
+                    }
+                    else {
+                        // something unexpected happened
+                        console.log('unexpected')
+                        console.log(data['state'])
+                        $(status_div.childNodes[3]).text('Result: ' + data['state']);
+                    }
+                }
+                else {
+                    // rerun in 2 seconds
+                    setTimeout(function () {
+                        update_progress(status_url, nanobar, status_div);
+                    }, 2000);
+                }
+            });
+        }
+        $(function () {
+            $("#accordion").accordion({
+                heightStyle: "content",
+                active: 1
+            });
+        });
+        $(function () {
+            $("#conteudodossie").accordion({
+            });
+        });
+        var verConteudoDossie = function (dossie_id) {
+            status_url = '/api/dossietable/' + dossie_id;
+            $.getJSON(status_url, function (data) {
+                $.each(data, function (index, value) {
+                    $('#conteudodossie').append('<h3>' + index + '</h3>');
+                    $('#conteudodossie').append('<div class="col-xs-12"><span>' + value + '</span></div>');
+                    console.log(value);
+                });
+                //div = $('<div id="resumo"><div>' + dossie_id + '</div><div>0%</div><div>...</div><div>&nbsp;</div></div>');
+            });
+            $("#myModal").modal()
+        }
+    </script>
+</body>
+
+</html>

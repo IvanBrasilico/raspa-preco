@@ -1,20 +1,38 @@
+"""DataBase models for raspapreco mod1"""
 import os
+from collections import OrderedDict
 
-from sqlalchemy import (Column, ForeignKey, Integer, String, Table,
-                        create_engine)
+from sqlalchemy import (Column, DateTime, ForeignKey, Integer, LargeBinary,
+                        Numeric, String, Table, create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 
-path = os.path.dirname(os.path.abspath(__file__))
-path = os.path.join(path, 'raspa.db')
-if os.name != 'nt':
-    path = '/' + path
-engine = create_engine('sqlite:///' + path, convert_unicode=True)
-Base = declarative_base()
-Session = sessionmaker(bind=engine)
-session = scoped_session(Session)
-Base.metadata.bind = engine
 
+class MySession():
+    def __init__(self, base, test=False):
+        if test:
+            path = ':memory:'
+        else:
+            path = os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), 'raspa.db')
+            if os.name != 'nt':
+                path = '/' + path
+        self._engine = create_engine('sqlite:///' + path, convert_unicode=True)
+        Session = sessionmaker(bind=self._engine)
+        if test:
+            self._session = Session()
+        else:
+            self._session = scoped_session(Session)
+            base.metadata.bind = self._engine
+
+    def session(self):
+        return self._session
+
+    def engine(self):
+        return self._engine
+
+
+Base = declarative_base()
 
 produto_procedimento = Table('produto_procedimento', Base.metadata,
                              Column('left_id', Integer,
@@ -44,6 +62,7 @@ class Procedimento(Base):
         'Site',
         secondary=site_procedimento,
         back_populates='procedimentos')
+    dossies = relationship('Dossie', back_populates='procedimento')
 
     def __init__(self, nome):
         self.nome = nome
@@ -58,13 +77,15 @@ class Produto(Base):
         'Procedimento',
         secondary=produto_procedimento,
         back_populates='produtos')
+    produtos_encontrados = relationship(
+        'ProdutoEncontrado', back_populates='produto')
 
     def __init__(self, descricao):
         self.descricao = descricao
 
 
 class Site(Base):
-    """Um site que será fonte de dados"""
+    """Um site que sera fonte de dados"""
     __tablename__ = 'sites'
     id = Column(Integer, primary_key=True)
     title = Column(String(20), unique=True)
@@ -73,12 +94,71 @@ class Site(Base):
         'Procedimento',
         secondary=site_procedimento,
         back_populates='sites')
+    produtos_encontrados = relationship(
+        'ProdutoEncontrado', back_populates='site')
 
     def __init__(self, title, url):
         self.title = title
         self.url = url
 
 
+class Dossie(Base):
+    """Resulta de um "scrap" de um Procedimento em uma
+    data, refinado"""
+    __tablename__ = 'dossies'
+    id = Column(Integer, primary_key=True)
+    data = Column(DateTime)
+    # task_id estará preenchido apenas se produtos_econtrados
+    # do dossiê estiverem sendo preenchidos em background
+    task_id = Column(String(50))
+    procedimento_id = Column(Integer, ForeignKey('procedimentos.id'))
+    procedimento = relationship('Procedimento', back_populates='dossies')
+    produtos_encontrados = relationship(
+        'ProdutoEncontrado', back_populates='dossie')
+
+    def __init__(self, procedimento, data):
+        self.procedimento_id = procedimento.id
+        self.data = data
+
+
+class ProdutoEncontrado(Base):
+    """Informações de produto na página pesquisada
+    que pode ser idêntico/similar ao produto desejado"""
+    __tablename__ = 'produtosencontrados'
+    id = Column(Integer, primary_key=True)
+    produto_id = Column(Integer, ForeignKey('produtos.id'))
+    produto = relationship(
+        'Produto', back_populates='produtos_encontrados')
+    site_id = Column(Integer, ForeignKey('sites.id'))
+    site = relationship(
+        'Site', back_populates='produtos_encontrados')
+    dossie_id = Column(Integer, ForeignKey('dossies.id'))
+    dossie = relationship(
+        'Dossie', back_populates='produtos_encontrados')
+    descricao_site = Column(String(200))
+    url = Column(String(200))
+    preco = Column(Numeric(asdecimal=False))
+    foto = Column(LargeBinary)
+
+    def __init__(self, dossie, produto, site, descricao_site, url, preco):
+        self.dossie_id = dossie.id
+        self.produto_id = produto.id
+        self.site_id = site.id
+        self.descricao_site = descricao_site
+        self.url = url
+        self.preco = preco
+
+    def to_dict(self):
+        return OrderedDict({'data': self.dossie.data,
+                            'produto': self.produto.descricao,
+                            'site': self.site.title,
+                            'descricao_site': self.descricao_site,
+                            'url': self.url,
+                            'preco': self.preco
+                            })
+
+
 if __name__ == '__main__':
-    pass
-    # Base.metadata.create_all(engine)
+    asession = MySession(Base)
+    Base.metadata.drop_all(asession.engine())
+    Base.metadata.create_all(asession.engine())

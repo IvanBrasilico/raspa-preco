@@ -103,6 +103,4 @@ ENV/
 
 # End of https://www.gitignore.io/api/python
 
-bottery_core
 settings.py
-raspapreco/models/raspa.db

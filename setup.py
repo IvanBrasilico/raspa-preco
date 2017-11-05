@@ -1,7 +1,3 @@
-import ast
-import os
-import re
-
 from setuptools import find_packages, setup
 
 LONG_DESCRIPTION = ''
@@ -23,6 +19,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'bs4',
+        'celery',
         'certifi',
         'chardet',
         'flask',
@@ -30,6 +27,7 @@ setup(
         'flask_restless',
         'flask_sqlalchemy',
         'idna',
+        'json-tricks',
         'requests',
         'SQLAlchemy',
         'urllib3'
