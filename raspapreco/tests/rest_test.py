@@ -94,7 +94,8 @@ class FlaskTestCase(unittest.TestCase):
 
     def _postproduto(self):
         rv = self.app.post('/api/produtos',
-                           data=json.dumps({'descricao': 'test'}),
+                           data=json.dumps(
+                               {'descricao': 'test', 'preco_declarado': 1.99}),
                            follow_redirects=True,
                            headers={'Content-Type': 'application/json'})
         fields = json.loads(rv.data.decode('utf-8'))

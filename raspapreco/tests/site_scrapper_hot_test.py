@@ -29,14 +29,14 @@ if not proc.produtos:
         Produto.descricao == 'bolsa feminina').first()
     if bolsa is None:
         print('Bolsa não existe, criando...')
-        bolsa = Produto('bolsa feminina')
+        bolsa = Produto('bolsa feminina', '10.50')
         proc.produtos.append(bolsa)
 
     caneta = session.query(Produto).filter(
         Produto.descricao == 'Caneta de 10 cores').first()
     if caneta is None:
         print('Caneta não existe, criando...')
-        caneta = Produto('Caneta de 10 cores')
+        caneta = Produto('Caneta de 10 cores', '1.99')
         proc.produtos.append(caneta)
 
     session.merge(proc)

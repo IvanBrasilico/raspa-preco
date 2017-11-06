@@ -73,6 +73,7 @@ class Produto(Base):
     __tablename__ = 'produtos'
     id = Column(Integer, primary_key=True)
     descricao = Column(String(50), unique=True)
+    preco_declarado = Column(Numeric(asdecimal=False))
     procedimentos = relationship(
         'Procedimento',
         secondary=produto_procedimento,
@@ -80,8 +81,9 @@ class Produto(Base):
     produtos_encontrados = relationship(
         'ProdutoEncontrado', back_populates='produto')
 
-    def __init__(self, descricao):
+    def __init__(self, descricao, preco_declarado):
         self.descricao = descricao
+        self.preco_declarado = preco_declarado
 
 
 class Site(Base):

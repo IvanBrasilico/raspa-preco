@@ -47,7 +47,7 @@ setup(
             'pytest-cov',
             'pytest-mock',
             'requests-mock',
-            'sphinx',
+            'Sphinx',
             'testfixtures',
         ],
     },

@@ -37,12 +37,15 @@ class DossieManager():
         return self._procedimento.dossies[
             len(self._procedimento.dossies) - 1]
 
-    def inicia_dossie(self):
+    def inicia_dossie(self, task_id=None):
         if self._dossie is None:
             if self._procedimento.dossies:
                 self._dossie = self.ultimo_dossie
         if self._dossie is None:
             self._dossie = Dossie(self._procedimento, datetime.now())
+            self._dossie.task_id = task_id
+            self._session.add(self._dossie)
+            self._session.commit()
         return self._dossie
 
     def raspa(self, scraped=None):
@@ -135,13 +138,16 @@ class DossieManager():
             tabelaresumo = '<tbody>'
 
             tablehead = '<table class="table table-striped table-bordered ' + \
-                'table-responsive"><thead><th><tr><td>-</td>'
+                'table-responsive"><thead><th><tr>' + \
+                '<td > Produto </td> <td> Valor declarado </td>'
             for site in self.dossie.procedimento.sites:
                 tablehead = tablehead + '<td>' + site.title + '<td>'
-            tablehead = tablehead + '<td>Total</td></tr></th></thead>'
+            tablehead = tablehead + '<td>Média</td><td>%</td>' + \
+                '</tr></th></thead>'
 
             for produto in self.dossie.procedimento.produtos:
                 tabelaresumo += '<tr><td>' + produto.descricao + '</td>'
+                tabelaresumo += '<td>' + str(produto.preco_declarado) + '</td>'
                 for site in self.dossie.procedimento.sites:
                     totalprodutoporsite = self._session. \
                         query(func.avg(ProdutoEncontrado.preco)). \
@@ -149,13 +155,18 @@ class DossieManager():
                         filter(ProdutoEncontrado.site_id == site.id). \
                         filter(ProdutoEncontrado.dossie_id ==
                                self.dossie.id).scalar()
-                    tabelaresumo += '<td>' + str(totalprodutoporsite) + '<td>'
-                totalproduto = self._session. \
+                    tabelaresumo += '<td>' + \
+                        '{0.2f}'.format(totalprodutoporsite) + '<td>'
+                mediaproduto = self._session. \
                     query(func.avg(ProdutoEncontrado.preco)). \
                     filter(ProdutoEncontrado.produto_id == produto.id). \
                     filter(ProdutoEncontrado.dossie_id == self.dossie.id). \
                     scalar()
-                tabelaresumo += '<td>' + str(totalproduto) + '</td></tr>'
+                tabelaresumo += '<td>' + \
+                    '{0.2f}'.format(mediaproduto) + '</td></tr>'
+                tabelaresumo += '<td>' + \
+                    '{0.2f}'.format(produto.preco_declarado /
+                                    mediaproduto * 100) + '</td></tr>'
             tabelaresumo += '</tbody></table>'
             tabelaresumo = tablehead + tabelaresumo
         return tabelaresumo

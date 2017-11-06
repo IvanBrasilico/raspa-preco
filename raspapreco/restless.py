@@ -48,7 +48,6 @@ def raspac(self, dossie_id):
         scraped[produto.id] = produtos_scrapy
         time.sleep(0.2)  # Prevent site blocking
     dossiemanager.raspa(scraped)
-    dossie = dossiemanager.dossie
     dossie.task_id = ''
     session.merge(dossie)
     session.commit()
@@ -80,7 +79,7 @@ if len(sys.argv) > 1:
                 Procedimento.id == procedimento).first()
             executor = DossieManager(session, proc)
             executor.raspa()
-            return executor.dossie_to_html_table()
+            return jsonify(executor.dossie_to_html_table())
 
 
 @app.route('/api/procedimentos/delete_children/<procedimento>')
@@ -99,10 +98,9 @@ def scrapc(procedimento):
     proc = session.query(Procedimento).filter(
         Procedimento.id == procedimento).first()
     dossiemanager = DossieManager(session, proc)
-    dossie = dossiemanager.inicia_dossie()
     task = raspac.delay(procedimento)
-    dossie.task_id = task.id
-    session.add(dossie)
+    dossie = dossiemanager.inicia_dossie(task.id)
+    session.merge(dossie)
     session.commit()
     if app.config['DEBUG'] is True:
         return redirect(url_for('dossie_home') + '?procedimento_id=' +

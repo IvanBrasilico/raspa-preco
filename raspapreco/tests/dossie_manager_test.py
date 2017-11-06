@@ -23,7 +23,7 @@ class TestExecutor(unittest.TestCase):
         dossie = Dossie(procedimento, datetime.now())
         session.add(dossie)
         session.commit()
-        produto = Produto('produto')
+        produto = Produto('produto', 1.99)
         session.add(produto)
         session.commit()
         site = Site('site', 'http')

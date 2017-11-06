@@ -126,6 +126,8 @@
               <div class="form-group">
                 <label for="descricao">Descrição:</label>
                 <input type="text" class="form-control" id="descricao" name="descricao">
+                <label for="preco_declarado">Preço declarado:</label>
+                <input type="text" class="form-control" id="preco_declarado" name="preco_declarado">
               </div>
               <div class="col-xs-6">
                 <button class="btn btn-block btn-primary btn-default" id="btnsaveproduto">
@@ -269,6 +271,7 @@
       $.getJSON('/api/produtos/' + id, null, function (data) {
         $("#idproduto").val(data["id"]);
         $('#descricao').val(data["descricao"]);
+        $('#preco_declarado').val(data["preco_declarado"]);
       });
     });
     $(document).on('click', '#procedimentos_table tbody tr', function () {

@@ -41,7 +41,7 @@ class TestModel(unittest.TestCase):
 
     def test_produto(self):
         self.set_up()
-        produto = Produto('teste')
+        produto = Produto('teste', 1.99)
         assert produto.descricao == 'teste'
         self.session.commit()
         # assert produto.id is not None
@@ -53,10 +53,10 @@ class TestModel(unittest.TestCase):
         assert procedimento.nome == 'teste'
         procedimento.id = 1  # Memory does not have autoincrement
         self.session.commit()
-        produto = Produto('teste')
+        produto = Produto('teste', 1.99)
         assert produto.descricao == 'teste'
         produto.id = 1  # Memory does not have autoincrement
-        produto2 = Produto('teste2')
+        produto2 = Produto('teste2', 2.99)
         assert produto2.descricao == 'teste2'
         produto2.id = 2  # Memory does not have autoincrement
         self.session.commit()
@@ -87,7 +87,7 @@ class TestModel(unittest.TestCase):
         self.set_up()
         procedimento = Procedimento('teste')
         dossie = Dossie(procedimento, '2017-10-31')
-        produto = Produto('teste')
+        produto = Produto('teste', 1.99)
         site = Site('teste', 'url')
         produtoencontrado = ProdutoEncontrado(
             dossie, produto, site, 'teste', 'www.teste', 1.00)
