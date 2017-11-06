@@ -134,6 +134,7 @@ def dossie_table(dossie_id):
     dossiemanager = DossieManager(session, dossie=dossie)
     return dumps(dossiemanager.dossie_to_html_table())
 
+
 @app.route('/api/procedimentos/delete_children/<procedimento>')
 def delete_children(procedimento):
     proc = session.query(Procedimento).filter(
@@ -143,6 +144,7 @@ def delete_children(procedimento):
     session.merge(proc)
     session.commit()
     return jsonify({'message': 'procedimento atualizado'}), 200
+
 
 # Create the Flask-Restless API manager.
 manager = flask_restless.APIManager(app, session=session)

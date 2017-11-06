@@ -147,7 +147,8 @@ class DossieManager():
 
             for produto in self.dossie.procedimento.produtos:
                 tabelaresumo += '<tr><td>' + produto.descricao + '</td>'
-                tabelaresumo += '<td>' + '{:0.2f}'.format(produto.preco_declarado) + '</td>'
+                tabelaresumo += '<td>' + \
+                    '{:0.2f}'.format(produto.preco_declarado) + '</td>'
                 for site in self.dossie.procedimento.sites:
                     totalprodutoporsite = self._session. \
                         query(func.avg(ProdutoEncontrado.preco)). \
@@ -166,7 +167,7 @@ class DossieManager():
                     '{:0.2f}'.format(mediaproduto) + '</td>'
                 tabelaresumo += '<td>' + \
                     '{:0.2f}'.format(produto.preco_declarado /
-                                    mediaproduto * 100) + '</td></tr>'
+                                     mediaproduto * 100) + '</td></tr>'
             tabelaresumo += '</tbody></table>'
             tabelaresumo = tablehead + tabelaresumo
         return tabelaresumo
