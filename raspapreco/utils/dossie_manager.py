@@ -104,11 +104,11 @@ class DossieManager():
             result['Resumo'] = self.tabelaresumo()
 
             tablehead = '<table class="table table-striped table-bordered' + \
-                ' table-responsive"><thead><th><tr>'
+                ' table-responsive"><thead><tr>'
             tableheadtr = ''
             for key in self.dossie.produtos_encontrados[0].to_dict():
-                tableheadtr = tableheadtr + '<td>' + key + '</td>'
-            tablehead = tablehead + tableheadtr + '</tr></th></thead><tbody>'
+                tableheadtr = tableheadtr + '<th>' + key + '</th>'
+            tablehead = tablehead + tableheadtr + '</tr></thead><tbody>'
 
             for produto in self.dossie.procedimento.produtos:
                 html = ''
@@ -138,16 +138,16 @@ class DossieManager():
             tabelaresumo = '<tbody>'
 
             tablehead = '<table class="table table-striped table-bordered ' + \
-                'table-responsive"><thead><th><tr>' + \
-                '<td > Produto </td> <td> Valor declarado </td>'
+                'table-responsive"><thead><tr>' + \
+                '<th>Produto</th><th>Valor declarado</th>'
             for site in self.dossie.procedimento.sites:
-                tablehead = tablehead + '<td>' + site.title + '<td>'
-            tablehead = tablehead + '<td>Média</td><td>%</td>' + \
-                '</tr></th></thead>'
+                tablehead = tablehead + '<th>' + site.title + '</th>'
+            tablehead = tablehead + '<th>Média</th><th>%</th>' + \
+                '</tr></thead>'
 
             for produto in self.dossie.procedimento.produtos:
                 tabelaresumo += '<tr><td>' + produto.descricao + '</td>'
-                tabelaresumo += '<td>' + str(produto.preco_declarado) + '</td>'
+                tabelaresumo += '<td>' + '{:0.2f}'.format(produto.preco_declarado) + '</td>'
                 for site in self.dossie.procedimento.sites:
                     totalprodutoporsite = self._session. \
                         query(func.avg(ProdutoEncontrado.preco)). \
@@ -156,16 +156,16 @@ class DossieManager():
                         filter(ProdutoEncontrado.dossie_id ==
                                self.dossie.id).scalar()
                     tabelaresumo += '<td>' + \
-                        '{0.2f}'.format(totalprodutoporsite) + '<td>'
+                        '{:0.2f}'.format(totalprodutoporsite) + '</td>'
                 mediaproduto = self._session. \
                     query(func.avg(ProdutoEncontrado.preco)). \
                     filter(ProdutoEncontrado.produto_id == produto.id). \
                     filter(ProdutoEncontrado.dossie_id == self.dossie.id). \
                     scalar()
                 tabelaresumo += '<td>' + \
-                    '{0.2f}'.format(mediaproduto) + '</td></tr>'
+                    '{:0.2f}'.format(mediaproduto) + '</td>'
                 tabelaresumo += '<td>' + \
-                    '{0.2f}'.format(produto.preco_declarado /
+                    '{:0.2f}'.format(produto.preco_declarado /
                                     mediaproduto * 100) + '</td></tr>'
             tabelaresumo += '</tbody></table>'
             tabelaresumo = tablehead + tabelaresumo

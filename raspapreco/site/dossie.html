@@ -10,6 +10,11 @@
     <!-- <link href="/static/css/bootstrap.css" rel="stylesheet"> -->
     <link href="/static/css/jquery-ui.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <style>
+        .modal.large {
+            width: 80%;
+        }
+    </style>
 </head>
 
 <body>
@@ -102,7 +107,7 @@
             </div>
         </div>
         <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
+            <div class="modal-dialog  modal-lg">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
@@ -157,14 +162,7 @@
                 });
                 $('#dossies_table tbody tr').remove();
                 $.each(data["dossies"], function (i, dossie) {
-                    if (dossie.task_id == '') {
-                        $('<tr>').append(
-                            $('<td>').text(dossie.id),
-                            $('<td>').text(dossie.data),
-                            $('<td>').html('<button type="button" class="btn btn-info btn-lg" ' +
-                                ' onclick="verConteudoDossie(' + dossie.id + ')" > Ver conteúdo</button > ')
-                        ).appendTo('#dossies_table');
-                    } else {
+                    if (dossie.task_id) {
                         div = $('<div class="progress"><div></div><div>0%</div><div>...</div><div>&nbsp;</div></div><hr>');
                         $('#progress').append(div);
                         // create a progress bar
@@ -174,6 +172,13 @@
                         });
                         status_url = '/api/scrapprogress/' + encodeURI(dossie.task_id)
                         update_progress(status_url, nanobar, div[0]);
+                    } else {
+                        $('<tr>').append(
+                            $('<td>').text(dossie.id),
+                            $('<td>').text(dossie.data),
+                            $('<td>').html('<button type="button" class="btn btn-info btn-lg" ' +
+                                ' onclick="verConteudoDossie(' + dossie.id + ')" > Ver conteúdo</button > ')
+                        ).appendTo('#dossies_table');
                     }
                 });
             });
@@ -231,7 +236,7 @@
             $.getJSON(status_url, function (data) {
                 $.each(data, function (index, value) {
                     $('#conteudodossie').append('<h3>' + index + '</h3>');
-                    $('#conteudodossie').append('<div class="col-xs-12"><span>' + value + '</span></div>');
+                    $('#conteudodossie').append(value);
                     console.log(value);
                 });
                 //div = $('<div id="resumo"><div>' + dossie_id + '</div><div>0%</div><div>...</div><div>&nbsp;</div></div>');

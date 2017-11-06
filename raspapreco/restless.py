@@ -79,33 +79,20 @@ if len(sys.argv) > 1:
                 Procedimento.id == procedimento).first()
             executor = DossieManager(session, proc)
             executor.raspa()
-            return jsonify(executor.dossie_to_html_table())
+            return redirect(url_for('dossie_home') + '?procedimento_id=' +
+                            str(proc.id))
 
 
-@app.route('/api/procedimentos/delete_children/<procedimento>')
-def delete_children(procedimento):
-    proc = session.query(Procedimento).filter(
-        Procedimento.id == procedimento).first()
-    proc.sites = []
-    proc.produtos = []
-    session.merge(proc)
-    session.commit()
-    return jsonify({'message': 'procedimento atualizado'}), 200
-
-
-@app.route('/api/scrapc/<procedimento>')
-def scrapc(procedimento):
-    proc = session.query(Procedimento).filter(
-        Procedimento.id == procedimento).first()
-    dossiemanager = DossieManager(session, proc)
-    task = raspac.delay(procedimento)
-    dossie = dossiemanager.inicia_dossie(task.id)
-    session.merge(dossie)
-    session.commit()
-    if app.config['DEBUG'] is True:
-        return redirect(url_for('dossie_home') + '?procedimento_id=' +
-                        str(proc.id))
-    else:
+if app.config['DEBUG'] is False:
+    @app.route('/api/scrap/<procedimento>')
+    def scrapc(procedimento):
+        proc = session.query(Procedimento).filter(
+            Procedimento.id == procedimento).first()
+        dossiemanager = DossieManager(session, proc)
+        task = raspac.delay(procedimento)
+        dossie = dossiemanager.inicia_dossie(task.id)
+        session.merge(dossie)
+        session.commit()
         return redirect('/raspapreco/dossie.html?procedimento_id=' +
                         str(proc.id))
 
@@ -147,6 +134,15 @@ def dossie_table(dossie_id):
     dossiemanager = DossieManager(session, dossie=dossie)
     return dumps(dossiemanager.dossie_to_html_table())
 
+@app.route('/api/procedimentos/delete_children/<procedimento>')
+def delete_children(procedimento):
+    proc = session.query(Procedimento).filter(
+        Procedimento.id == procedimento).first()
+    proc.sites = []
+    proc.produtos = []
+    session.merge(proc)
+    session.commit()
+    return jsonify({'message': 'procedimento atualizado'}), 200
 
 # Create the Flask-Restless API manager.
 manager = flask_restless.APIManager(app, session=session)
