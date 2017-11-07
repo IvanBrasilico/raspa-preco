@@ -34,7 +34,6 @@ class Scraper:
         self.scraped = {}
 
     def scrap(self):
-        # TODO: use non blocking (async or threaded call)
         if self.sites is None:
             raise AttributeError(_('No site passed'))
         if self.produtos is None:
@@ -48,7 +47,6 @@ class Scraper:
 
 
 def scrap_one(site, produto):
-    # TODO: use non blocking (async or threaded call)
     configs = SCRAPY_DICT.get(site.title)
     if not configs:
         raise KeyError(_('Site not configured: ' + site.title))
