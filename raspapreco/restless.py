@@ -4,7 +4,7 @@ from datetime import datetime
 
 import flask_restless
 from celery import Celery
-from flask import Flask, jsonify, redirect, url_for, Response
+from flask import Flask, Response, jsonify, redirect, url_for
 from flask_cors import CORS
 from flask_jwt import JWT, jwt_required
 from json_tricks import dumps

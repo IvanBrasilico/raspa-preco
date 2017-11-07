@@ -1,5 +1,5 @@
-from flask import Flask, Response, redirect, url_for, request, session, abort
-from flask_jwt import JWT, jwt_required, current_identity
+from flask import Flask, Response, abort, redirect, request, session, url_for
+from flask_jwt import JWT, current_identity, jwt_required
 from werkzeug.security import safe_str_cmp
 
 from raspapreco.restless import app
