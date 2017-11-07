@@ -38,7 +38,9 @@
       </div>
     </div>
   </nav>
-  <div class="container">
+  <input type="hidden" id="token" />
+  <div id="login"></div>
+  <div class="container" id="content">
     <div class="alert alert-danger alert-dismissible collapse" role="alert" id="jsonerror">
       <button type="button" class="close" onclick="$('#jsonerror').hide()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -260,48 +262,89 @@
     });
     $(document).on('click', '#sites_table tbody tr', function () {
       id = $(this).find('td').eq(0).text();
-      $.getJSON('/api/sites/' + id, null, function (data) {
-        $("#id").val(data["id"]);
-        $('#title').val(data["title"]);
-        $('#url').val(data['url']);
+      headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'JWT ' + $('#token').val()
+      }
+      url = '/api/sites/' + id
+      $.ajax({
+        dataType: 'json',
+        url: url,
+        headers: headers,
+        type: 'get',
+        success: function (data) {
+          $("#id").val(data["id"]);
+          $('#title').val(data["title"]);
+          $('#url').val(data['url']);
+        }
       });
     });
     $(document).on('click', '#produtos_table tbody tr', function () {
       id = $(this).find('td').eq(0).text();
-      $.getJSON('/api/produtos/' + id, null, function (data) {
-        $("#idproduto").val(data["id"]);
-        $('#descricao').val(data["descricao"]);
-        $('#preco_declarado').val(data["preco_declarado"]);
+      headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'JWT ' + $('#token').val()
+      }
+      url = '/api/produtos/' + id
+      $.ajax({
+        dataType: 'json',
+        url: url,
+        headers: headers,
+        type: 'get',
+        success: function (data) {
+          $("#idproduto").val(data["id"]);
+          $('#descricao').val(data["descricao"]);
+          $('#preco_declarado').val(data["preco_declarado"]);
+        }
       });
     });
     $(document).on('click', '#procedimentos_table tbody tr', function () {
       id = $(this).find('td').eq(0).text();
-      $.getJSON('/api/procedimentos/' + id, null, function (data) {
-        $("#idprocedimento").val(data["id"]);
-        $('#nome').val(data["nome"]);
-        $('#siteac_table tbody tr').remove();
-        $.each(data["sites"], function (i, site) {
-          $('<tr>').append(
-            $('<td>').text(site.id),
-            $('<td>').text(site.title),
-            $('<td>').html('<input type="button" value="x" onclick="deleteRow(this)" />')
-          ).appendTo('#siteac_table');
-        });
-        $('#produtoac_table tbody tr').remove();
-        $.each(data["produtos"], function (i, produto) {
-          $('<tr>').append(
-            $('<td>').text(produto.id),
-            $('<td>').text(produto.descricao),
-            $('<td>').html('<input type="button" value="x" onclick="deleteRow(this)" />')
-          ).appendTo('#produtoac_table');
-        });
+      headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'JWT ' + $('#token').val()
+      }
+      url = '/api/procedimentos/' + id
+      $.ajax({
+        dataType: 'json',
+        url: url,
+        headers: headers,
+        type: 'get',
+        success: function (data) {
+          $("#idprocedimento").val(data["id"]);
+          $('#nome').val(data["nome"]);
+          $('#siteac_table tbody tr').remove();
+          $.each(data["sites"], function (i, site) {
+            $('<tr>').append(
+              $('<td>').text(site.id),
+              $('<td>').text(site.title),
+              $('<td>').html('<input type="button" value="x" onclick="deleteRow(this)" />')
+            ).appendTo('#siteac_table');
+          });
+          $('#produtoac_table tbody tr').remove();
+          $.each(data["produtos"], function (i, produto) {
+            $('<tr>').append(
+              $('<td>').text(produto.id),
+              $('<td>').text(produto.descricao),
+              $('<td>').html('<input type="button" value="x" onclick="deleteRow(this)" />')
+            ).appendTo('#produtoac_table');
+          });
+        }
       });
     });
     $(document).ready(function () {
+      var token = $('#token').val();
+      if (!token) {
+        $('#login').load('/api/login_form');
+      } else {
+        load_tables();
+      }
+    });
+    var load_tables = function () {
       list_filtered('sites', 'title');
       list_filtered('produtos', 'descricao');
       list_filtered('procedimentos', 'nome');
-    });
+    }
     $(document).on('click', '#btnfiltersites', function () {
       list_filtered('sites', 'title', $('#txtfiltersites').val());
     });
@@ -367,14 +410,22 @@
         url = '/api/sites';
         params = '{"filters": [{ "name": "title", "op": "like", "val": "%' + request.term + '%"}]}'
         url = url + '?q=' + encodeURIComponent(params);
-        headers = { 'Content-Type': 'application/json' }
-        $.getJSON(url, function (data) {
-          console.log(data);
-          var lista = [];
-          $.each(data.objects, function (i, item) {
-            lista.push({ "label": item.title, "id": item.id });
-          });
-          response(lista);
+        headers = {
+          'Content-Type': 'application/json',
+          'Authorization': 'JWT ' + $('#token').val()
+        }
+        $.ajax({
+          dataType: 'json',
+          url: url,
+          headers: headers,
+          type: 'get',
+          success: function (data) {
+            var lista = [];
+            $.each(data.objects, function (i, item) {
+              lista.push({ "label": item.title, "id": item.id });
+            });
+            response(lista);
+          }
         });
       },
       minLength: 2,
@@ -392,14 +443,22 @@
         url = '/api/produtos';
         params = '{"filters": [{ "name": "descricao", "op": "like", "val": "%' + request.term + '%"}]}'
         url = url + '?q=' + encodeURIComponent(params);
-        headers = { 'Content-Type': 'application/json' }
-        $.getJSON(url, function (data) {
-          console.log(data);
-          var lista = [];
-          $.each(data.objects, function (i, item) {
-            lista.push({ "label": item.descricao, "id": item.id });
-          });
-          response(lista);
+        headers = {
+          'Content-Type': 'application/json',
+          'Authorization': 'JWT ' + $('#token').val()
+        }
+        $.ajax({
+          dataType: 'json',
+          url: url,
+          headers: headers,
+          type: 'get',
+          success: function (data) {
+            var lista = [];
+            $.each(data.objects, function (i, item) {
+              lista.push({ "label": item.descricao, "id": item.id });
+            });
+            response(lista);
+          }
         });
       },
       minLength: 2,
@@ -425,17 +484,25 @@
         params = '{"filters": [{ "name": "' + campo + '", "op": "like", "val": "%' + filter + '%"}]}'
         url = url + '?q=' + encodeURIComponent(params)
       }
-      headers = { 'Content-Type': 'application/json' }
-      $.getJSON(url, function (data) {
-        $('#' + classe + '_table tbody tr').remove();
-        $.each(data.objects, function (i, item) {
-          $('<tr>').append(
-            $('<td>').text(item.id),
-            $('<td>').text(item[campo])
-          ).appendTo('#' + classe + '_table');
-        });
+      headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'JWT ' + $('#token').val()
+      }
+      $.ajax({
+        dataType: 'json',
+        url: url,
+        headers: headers,
+        type: 'get',
+        success: function (data) {
+          $('#' + classe + '_table tbody tr').remove();
+          $.each(data.objects, function (i, item) {
+            $('<tr>').append(
+              $('<td>').text(item.id),
+              $('<td>').text(item[campo])
+            ).appendTo('#' + classe + '_table');
+          });
+        }
       });
-      return false;
     };
     var clear_form = function (form) {
       $.each(form[0].elements, function (index, formField) {
@@ -449,7 +516,8 @@
       $.ajax({
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/vnd.api+json'
+          'Accept': 'application/vnd.api+json',
+          'Authorization': 'JWT ' + $('#token').val()
         },
         url: url + '/' + one_id,
         type: 'delete',
@@ -461,7 +529,6 @@
           list_filtered(classe, campo);
         },
         error: function (data) {
-          console.log(data.responseJSON);
           $('#erro').empty().append(data.responseJSON["message"])
           $('#jsonerror').show();
         }
@@ -496,7 +563,8 @@
       $.ajax({
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/vnd.api+json'
+          'Accept': 'application/vnd.api+json',
+          'Authorization': 'JWT ' + $('#token').val()
         },
         url: save_url,
         data: JSON.stringify(formdata),
@@ -523,7 +591,6 @@
       url = '/api/procedimentos';
       deleteurl = '/api/procedimentos/delete_children';
       oid = $("#idprocedimento").val()
-      console.log(oid);
       if (oid) {
         var datasites = [];
         $('#siteac_table tr td:first-child').each(function () {
@@ -534,19 +601,19 @@
           dataprodutos.push({ "id": $(this).text() });
         });
         data = {
-          'produtos': {'add': dataprodutos},
-          'sites': {'add': datasites}
+          'produtos': { 'add': dataprodutos },
+          'sites': { 'add': datasites }
         }
         deleteurl = deleteurl + '/' + oid;
         $.ajax({
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/vnd.api+json'
+            'Accept': 'application/vnd.api+json',
+            'Authorization': 'JWT ' + $('#token').val()
           },
           url: deleteurl,
           type: 'get',
           success: function (data) {
-            console.log(data);
           },
           error: function (data) {
             $('#erro').empty().append(data.responseJSON["message"])
@@ -557,7 +624,8 @@
         $.ajax({
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/vnd.api+json'
+            'Accept': 'application/vnd.api+json',
+            'Authorization': 'JWT ' + $('#token').val()
           },
           url: save_url,
           data: JSON.stringify(data),
@@ -565,7 +633,6 @@
           enctype: 'text/plain',
           dataType: 'json',
           success: function (data) {
-            console.log(data);
           },
           error: function (data) {
             $('#erro').empty().append(data.responseJSON["message"])

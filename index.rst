@@ -11,6 +11,11 @@ Welcome to Raspa Preço's documentation!
    :caption: Contents:
 
 
+.. automodule:: raspapreco/models/models
+
+.. automodule:: raspapreco/utils/dossie_manager
+
+.. automodule:: raspapreco/utils/site_scraper
 
 Indices and tables
 ==================

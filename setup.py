@@ -24,6 +24,7 @@ setup(
         'chardet',
         'flask',
         'flask_cors',
+        'Flask-JWT',
         'flask_restless',
         'flask_sqlalchemy',
         'idna',

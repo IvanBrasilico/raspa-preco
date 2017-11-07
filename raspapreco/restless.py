@@ -6,6 +6,7 @@ import flask_restless
 from celery import Celery
 from flask import Flask, jsonify, redirect, url_for, Response
 from flask_cors import CORS
+from flask_jwt import JWT, jwt_required, current_identity
 from json_tricks import dumps
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
@@ -154,7 +155,17 @@ def delete_children(procedimento):
 
 
 # Create the Flask-Restless API manager.
-manager = flask_restless.APIManager(app, session=session)
+@jwt_required()
+def auth_func(**kw):
+    pass
+
+
+manager = flask_restless.APIManager(app, session=session,
+                                    preprocessors=dict(POST=[auth_func],
+                                                       GET=[auth_func],
+                                                       GET_MANY=[auth_func],
+                                                       PUT=[auth_func],
+                                                       DELETE=[auth_func]))
 
 # Create API endpoints, which will be available at /api/<tablename> by
 # default. Allowed HTTP methods can be specified as well.

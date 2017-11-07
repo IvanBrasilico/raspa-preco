@@ -11,63 +11,27 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header header">
-        <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#97bf8afda672ef73a836d55f018b43c868a97bb5"
-          data-toggle="collapse" type="button">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <span class="navbar-brand">Login</span>
-      </div>
-      <div class="navbar-collapse collapse" id="97bf8afda672ef73a836d55f018b43c868a97bb5">
-        <ul class="nav navbar-nav">
-          <li>
-            <a href="/" title="Site">Brasilico's Site</a>
-          </li>
-          <li class="active">
-            <a href="/raspapreco/" title="raspapreco">Raspa Preço</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-  <div class="container">
-    <div class="alert alert-danger alert-dismissible collapse" role="alert" id="jsonerror">
-      <button type="button" class="close" onclick="$('#jsonerror').hide()" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <span>
-        <p>Erro na conexão ao Servidor!
-          <span id="erro"></span>
-        </p>
-      </span>
-    </div>
-    <div class="alert alert-success alert-dismissible collapse" role="alert" id="jsonsuccess">
-      <button type="button" class="close" onclick="$('#jsonsuccess').hide()" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <span>
-        <p>Sucesso:&nbsp;
-          <span id="success"></span>
-        </p>
-      </span>
-    </div>
-    <ul id="rowTab" class="nav nav-tabs">
-      <li class="active">
-        <a data-toggle="tab" href="#login">Login</a>
-      </li>
-    </ul>
-    <div class="tab-content">
-      <div id="login" class="tab-pane fade in active">
-        <div id="logindetalhe" class="row">
+  <div id="loginmodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="alert alert-danger alert-dismissible collapse" role="alert" id="jsonerrorm">
+            <button type="button" class="close" onclick="$('#jsonerrorm').hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <span>
+              <p>Erro na conexão ao Servidor!
+                <span id="errom"></span>
+              </p>
+            </span>
+          </div>
+          <h4 class="modal-title">Formulário de Login</h4>
+        </div>
+        <div class="modal-body">
           <form id="frmlogin">
-            <input type="hidden" id="id" name="id">
             <div class="form-group">
-              <label for="nome">Nome:</label>
-              <input type="text" class="form-control" id="nome" name="nome">
+              <label for="username">Nome:</label>
+              <input type="text" class="form-control" id="username" name="username">
             </div>
             <div class="form-group">
               <label for="senha">Senha:</label>
@@ -81,13 +45,6 @@
       </div>
     </div>
   </div>
-  <div id="bottom" class="row">
-    <div class="col-md-12">
-      Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
-    </div>
-  </div>
-  </div>
-  </div>
   <script src="/static/js/jquery.min.js"></script>
   <script src="/static/js/bootstrap.min.js"></script>
   <script src="/static/js/jquery-ui.min.js"></script>
@@ -96,17 +53,16 @@
       event.preventDefault();
     });
     $(document).ready(function () {
+      $("#loginmodal").modal()
     });
     $(document).on('click', '#btnlogin', function () {
       login();
     });
-
     var login = function () {
-      $('#jsonsuccess').hide();
-      $('#jsonerror').hide();
-      url = '/auth'
-      data = {'username': $('#nome').val(), 'password': $('#senha').val()}
-      console.log(data)
+      $('#jsonsuccessm').hide();
+      $('#jsonerrorm').hide();
+      url = '/api/auth'
+      data = { 'username': $('#username').val(), 'password': $('#senha').val() }
       $.ajax({
         headers: {
           'Content-Type': 'application/json',
@@ -116,37 +72,31 @@
         dataType: 'json',
         data: JSON.stringify(data),
         success: function (data) {
-          console.log(data.access_token);
-          test_token(data.access_token);
-          clear_form($('#frmlogin'));
-          $('#success').empty().append("Login efetuado.")
-          $('#jsonsuccess').show();
+          $('#token').val(data.access_token)
+          // test_token();
+          load_tables();
+          $('#loginmodal').modal("hide");
         },
         error: function (data) {
-          console.log(data.responseJSON);
-          if (data.responseJSON) {
-            $('#erro').empty().append(data.responseJSON["description"])
+          console.log(data);
+          if (data.statusText) {
+            $('#errom').empty().append(data.statusText)
           } else {
-            $('#erro').empty().append('Servidor retornou erro. Usuário ou senha incorretos??')
+            $('#errom').empty().append('Servidor retornou erro. Usuário ou senha incorretos??')
           }
-          $('#jsonerror').show();
+          $('#jsonerrorm').show();
         }
       });
     }
-    var clear_form = function (form) {
-      $.each(form[0].elements, function (index, formField) {
-        if (formField.name) {
-          $(formField).val('');
-        }
-      });
-    };
-    var test_token = function (token) {
+    var test_token = function () {
       url = '/protected'
+      headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'JWT ' + $('#token').val()
+      }
+      console.log(headers);
       $.ajax({
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'JWT ' + token
-        },
+        headers: headers,
         url: url,
         type: 'get',
         dataType: 'json',
