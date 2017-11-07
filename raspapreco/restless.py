@@ -4,7 +4,7 @@ from datetime import datetime
 
 import flask_restless
 from celery import Celery
-from flask import Flask, jsonify, redirect, url_for
+from flask import Flask, jsonify, redirect, url_for, Response
 from flask_cors import CORS
 from json_tricks import dumps
 
@@ -17,6 +17,7 @@ mysession = MySession(Base)
 session = mysession.session()
 
 app = Flask(__name__)
+CORS(app)
 
 celery = Celery(app.name, broker='pyamqp://guest@localhost//',
                 backend='rpc://')
@@ -72,6 +73,12 @@ if len(sys.argv) > 1:
             with open('raspapreco/site/dossie.html') as f:
                 fdossie = f.read()
             return fdossie
+
+        @app.route('/api/login_form')
+        def login_form():
+            with open('raspapreco/site/login.html') as f:
+                flogin = f.read()
+            return flogin
 
         @app.route('/api/scrap/<procedimento>')
         def scrap(procedimento):
@@ -156,6 +163,5 @@ manager.create_api(Procedimento, methods=['GET', 'POST', 'PUT', 'DELETE'])
 manager.create_api(Site, methods=['GET', 'POST', 'PUT', 'DELETE'])
 
 # start the flask loop
-CORS(app)
 if __name__ == '__main__':
     app.run()

@@ -88,6 +88,11 @@ class Produto(Base):
 
 class Site(Base):
     """Um site que sera fonte de dados"""
+    # TODO: Permitir targets dinâmicos com subtabela targets
+    # Depois, modificar scrap e ProdutoEncontrado para também
+    # permitir comportamento dinâmico. Assim, app será para 
+    # qqer scrap, não só produto/preço
+
     __tablename__ = 'sites'
     id = Column(Integer, primary_key=True)
     title = Column(String(20), unique=True)
