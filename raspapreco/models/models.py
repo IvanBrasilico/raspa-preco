@@ -3,7 +3,7 @@ import os
 from collections import OrderedDict
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer, LargeBinary,
-                        Numeric, String, Table, create_engine)
+                        Numeric, PickleType, String, Table, create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 
@@ -97,6 +97,7 @@ class Site(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(20), unique=True)
     url = Column(String(200))
+    targets = Column(PickleType)
     procedimentos = relationship(
         'Procedimento',
         secondary=site_procedimento,
@@ -146,6 +147,7 @@ class ProdutoEncontrado(Base):
     url = Column(String(200))
     preco = Column(Numeric(asdecimal=False))
     foto = Column(LargeBinary)
+    campos = Column(PickleType)
 
     def __init__(self, dossie, produto, site, descricao_site, url, preco):
         self.dossie_id = dossie.id
@@ -166,6 +168,17 @@ class ProdutoEncontrado(Base):
 
 
 if __name__ == '__main__':
-    asession = MySession(Base)
-    Base.metadata.drop_all(asession.engine())
-    Base.metadata.create_all(asession.engine())
+    import alembic.config
+    alembicArgs = [
+        'revision',
+        '--autogenerate', '-m "from code"',
+    ]
+    alembic.config.main(argv=alembicArgs)
+    alembicArgs = [
+        '--raiseerr',
+        'upgrade', 'head',
+    ]
+    alembic.config.main(argv=alembicArgs)
+#    asession = MySession(Base)
+#    Base.metadata.drop_all(asession.engine())
+#    Base.metadata.create_all(asession.engine())

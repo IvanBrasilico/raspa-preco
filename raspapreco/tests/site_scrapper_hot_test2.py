@@ -12,7 +12,7 @@ Base.metadata.create_all(engine)
 
 
 class TestScrap(unittest.TestCase):
-    def set_up(self):
+    def setUp(self):
         proc = session.query(Procedimento).filter(
             Procedimento.nome == 'testeQWERTY').first()
         if proc is None:
@@ -33,27 +33,26 @@ class TestScrap(unittest.TestCase):
                 Produto.descricao == 'bolsa feminina').first()
             if bolsa is None:
                 print('Bolsa não existe, criando...')
-                bolsa = Produto('bolsa feminina')
+                bolsa = Produto('bolsa feminina', 2.50)
                 proc.produtos.append(bolsa)
 
             caneta = session.query(Produto).filter(
                 Produto.descricao == 'Caneta de 10 cores').first()
             if caneta is None:
                 print('Caneta não existe, criando...')
-                caneta = Produto('Caneta de 10 cores')
+                caneta = Produto('Caneta de 10 cores', 1.99)
                 proc.produtos.append(caneta)
 
             session.merge(proc)
             session.commit()
 
-    def tear_down(self):
+    def tearDown(self):
         proc = session.query(Procedimento).filter(
             Procedimento.nome == 'testeQWERTY').first()
         session.delete(proc)
         session.commit()
 
     def test_hot_scrap(self):
-        self.set_up()
         proc = session.query(Procedimento).filter(
             Procedimento.nome == 'testeQWERTY').first()
         scrap = Scraper(proc.sites, proc.produtos)

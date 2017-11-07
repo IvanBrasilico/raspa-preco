@@ -81,15 +81,30 @@ class DossieManager():
             for site, campos in sites.items():
                 site = session.query(Site).filter(
                     Site.id == site).first()
-                for ind in range(len(campos['url'])):
+                keys = campos.keys()
+                descricoes = campos.get('descricao')
+                urls = campos.get('url')
+                precos = campos.get('preco')
+                descricao_site = ''
+                url = ''
+                preco = None
+                for ind in range(len(keys)):
+                    if descricoes:
+                        descricao_site = descricoes[ind]
+                    if urls:
+                        url = urls[ind]
+                    if precos:
+                        preco = extrai_valor(precos[ind])
                     produtoencontrado = ProdutoEncontrado(
                         self._dossie,
                         produto,
                         site,
-                        descricao_site=campos['descricao'][ind],
-                        url=campos['url'][ind],
-                        preco=extrai_valor(campos['preco'][ind])
+                        descricao_site=descricao_site,
+                        url=url,
+                        preco=preco
                     )
+                    for key in keys():
+                        produto.campos[key] = campos[key][ind]
                     session.add(produtoencontrado)
         session.commit()
         return self._dossie

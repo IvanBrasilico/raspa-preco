@@ -55,8 +55,10 @@ def scrap_one(site, produto):
     search_params = configs['param_names']
     search = {}
     search[search_params['descricao']] = produto.descricao
-    targets = configs['targets']
-
+    if site.targets:
+        targets = site.targets
+    else:
+        targets = configs['targets']
     html = requests.get(url, params=search)
     bs = BeautifulSoup(html.text, 'html.parser')
     if xpath:
