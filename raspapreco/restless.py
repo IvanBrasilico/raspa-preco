@@ -6,7 +6,7 @@ import flask_restless
 from celery import Celery
 from flask import Flask, jsonify, redirect, url_for, Response
 from flask_cors import CORS
-from flask_jwt import JWT, jwt_required, current_identity
+from flask_jwt import JWT, jwt_required
 from json_tricks import dumps
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
@@ -19,6 +19,9 @@ session = mysession.session()
 
 app = Flask(__name__)
 CORS(app)
+app.config.update(SECRET_KEY='secret_xxx',
+                  JWT_AUTH_URL_RULE='/api/auth')
+
 
 celery = Celery(app.name, broker='pyamqp://guest@localhost//',
                 backend='rpc://')
@@ -75,12 +78,6 @@ if len(sys.argv) > 1:
                 fdossie = f.read()
             return fdossie
 
-        @app.route('/api/login_form')
-        def login_form():
-            with open('raspapreco/site/login.html') as f:
-                flogin = f.read()
-            return flogin
-
         @app.route('/api/scrap/<procedimento>')
         def scrap(procedimento):
             proc = session.query(Procedimento).filter(
@@ -89,6 +86,13 @@ if len(sys.argv) > 1:
             executor.raspa()
             return redirect(url_for('dossie_home') + '?procedimento_id=' +
                             str(proc.id))
+
+
+@app.route('/api/login_form')
+def login_form():
+    with open('raspapreco/site/login.html') as f:
+        flogin = f.read()
+    return flogin
 
 
 if app.config['DEBUG'] is False:
@@ -160,12 +164,16 @@ def auth_func(**kw):
     pass
 
 
-manager = flask_restless.APIManager(app, session=session,
-                                    preprocessors=dict(POST=[auth_func],
-                                                       GET=[auth_func],
-                                                       GET_MANY=[auth_func],
-                                                       PUT=[auth_func],
-                                                       DELETE=[auth_func]))
+if 'pytest' in sys.modules:
+    manager = flask_restless.APIManager(app, session=session)
+else:
+    manager = flask_restless.APIManager(app, session=session,
+                                        preprocessors=dict(POST=[auth_func],
+                                                           GET=[auth_func],
+                                                           GET_MANY=[
+                                                               auth_func],
+                                                           PUT=[auth_func],
+                                                           DELETE=[auth_func]))
 
 # Create API endpoints, which will be available at /api/<tablename> by
 # default. Allowed HTTP methods can be specified as well.

@@ -6,9 +6,13 @@ https://flask-restless.readthedocs.io/en/stable/requestformat.html
 """
 import json
 import unittest
+from unittest import mock
 from urllib.parse import urlencode
 
 import raspapreco.restless as restless
+
+# TODO: Melhorar teste inclusive com auth. Exemplo:
+# https://github.com/graup/flask-restless-security/blob/master/test.py
 
 
 class FlaskTestCase(unittest.TestCase):

@@ -4,9 +4,6 @@ from werkzeug.security import safe_str_cmp
 
 from raspapreco.restless import app
 
-app.config.update(SECRET_KEY='secret_xxx',
-                  JWT_AUTH_URL_RULE='/api/auth')
-
 
 class User():
     # proxy for a database of users
@@ -40,13 +37,14 @@ def identity(payload):
     return user
 
 
+jwt = JWT(app, authenticate, identity)
+
+
 @app.route('/protected')
 @jwt_required()
 def protected():
     return '%s' % current_identity
 
-
-jwt = JWT(app, authenticate, identity)
 
 if __name__ == '__main__':
     app.run()
