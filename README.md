@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/IvanBrasilico/raspa-preco.svg?branch=master)](https://travis-ci.org/IvanBrasilico/raspa-preco) [![codecov](https://codecov.io/gh/IvanBrasilico/raspa-preco/branch/master/graph/badge.svg)](https://codecov.io/gh/IvanBrasilico/raspa-preco)
+[![Build Status](https://travis-ci.org/IvanBrasilico/raspa-preco.svg?branch=master)](https://travis-ci.org/IvanBrasilico/raspa-preco) [![codecov](https://codecov.io/gh/IvanBrasilico/raspa-preco/branch/master/graph/badge.svg)](https://codecov.io/gh/IvanBrasilico/raspa-preco) [![Documentation Status](https://readthedocs.org/projects/raspa-preco/badge/?version=latest)](http://raspa-preco.readthedocs.io/pt_BR/latest/?badge=latest)
 
 # raspa-preco
 Raspador de sites e-commerce  - pesquisa de preço de produto por parâmetros e montagem de tabelas e dossiês comparativos
