@@ -74,7 +74,7 @@ def scrap_one(site, produto, debug=False):
         for key, target in targets.items():
             target_name = target[0]
             target_atributes = target[1]
-            if len(target) > 2: 
+            if len(target) > 2:
                 attribute = target[2]
             else:
                 attribute = None

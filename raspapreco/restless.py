@@ -4,8 +4,8 @@ import time
 import flask_restless
 import jinja2
 from celery import Celery
-from flask import (Flask, request, Response, jsonify, redirect,
-                   render_template, url_for)
+from flask import (Flask, Response, jsonify, redirect, render_template,
+                   request, url_for)
 from flask_cors import CORS
 from flask_jwt import jwt_required
 from json_tricks import dumps
