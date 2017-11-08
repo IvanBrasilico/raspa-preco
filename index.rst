@@ -14,7 +14,9 @@ Este projeto serve para "raspar" sites e montar dossiês. Por exemplo,
 para fazer pesquisa de preço declarado de produto em uma licitação,
 uma operação ou uma operação. 
 
-**Fazer link para histórias de usuário**
+[Histórias de usuário](https://github.com/IvanBrasilico/raspa-preco/wiki/UserStories)
+
+[Projeto](https://github.com/IvanBrasilico/raspa-preco/)
 
 As instruções de instalação estão no arquivo README e mais detalhadamente no
 arquivo shell-commands-history.
