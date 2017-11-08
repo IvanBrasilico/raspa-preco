@@ -35,7 +35,6 @@ git push
 
 python -m virtualenv venv
 . venv/bin/activate
-pip install SQLAlchemy requests BeautifulSoup
 
 # Para guardar e atualizar as dependências
 
@@ -51,15 +50,37 @@ python -m virtualenv venv
 pip install -r requirements.txt
 pip install -e . # IMPORTANTE para setar . como PYTHONPATH
 
-## Não esquecer de ir ao Travis adicionar o repositório e pegar o badge para o README após ter alguns testes rodando
+## Não esquecer de ir ao Travis e Codecovadicionar o repositório e pegar o badge para o README após ter alguns testes rodando
 
 
 
-Para servir a parte estática, colocar as seguintes linhas
-no arquivo nginx/sites-enabled e colocar o conteúdo de sites em 
-/var/ww/html:
+ln -s raspaprec/site/static raspapreco/static # Para a versão debug achar os static files
+
+# Para servir a parte estática, colocar as seguintes linhas
+# no arquivo nginx/sites-enabled e colocar o conteúdo de sites em 
+# /var/ww/html:
 
 location ~ ^/api.* {
     proxy_pass http://127.0.0.1:5000;
 
 }
+
+# Configuração do Sphinx (documentação)
+São dois arquivos, conf.py e index.rst. Olhar exemplo neste projeto.
+Inicia com sphinx-quickstart
+Aí é só colocar o nome dos módulos assim no arquivo .rst:
+.. automodule:: raspapreco.utils.site_scraper
+    :members:
+
+# Configuração do Celery
+sudo apt install rabbitmq-server
+pip install Celery
+ver arquivo celery.sh
+
+# Configurar alembic
+pip install alembic
+alembic init alembic
+## Configurar Banco de Dados em alembic/env.py
+# A cada mudança, rodar os comandos:
+alembic revision --autogenerate -m "Descrever a mudança"
+alembic upgrade head

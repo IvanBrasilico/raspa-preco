@@ -19,7 +19,6 @@
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
         </button>
         <span class="navbar-brand">Raspa Preço</span>
       </div>
@@ -30,9 +29,6 @@
           </li>
           <li class="active">
             <a href="/raspapreco/" title="Procedimento">Procedimento</a>
-          </li>
-          <li>
-            <a href="/raspapreco/dossie.html" title="Dossie">Dossiê</a>
           </li>
         </ul>
       </div>
@@ -171,7 +167,7 @@
             <form id="frmprocedimento">
               <input type="hidden" id="idprocedimento" name="idprocedimento">
               <div class="form-group">
-                <label for="descricao">Nome:</label>
+                <label for="nome">Nome:</label>
                 <input type="text" class="form-control" id="nome" name="nome">
               </div>
               <div class="col-xs-4">
@@ -402,7 +398,7 @@
       $('#produtoac_table tbody tr').remove();
     });
     $(document).on('click', '#btndoprocedimento', function () {
-      window.open('/api/scrap/' + $('#idprocedimento').val(), '_blank');
+      window.open('/api/scrap?procedimento=' + $('#idprocedimento').val(), '_blank');
     });
 
     $("#siteac").autocomplete({

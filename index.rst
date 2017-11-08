@@ -10,12 +10,48 @@ Welcome to Raspa Preço's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+Este projeto serve para "raspar" sites e montar dossiês. Por exemplo,
+para fazer pesquisa de preço declarado de produto em uma licitação,
+uma operação ou uma operação. 
 
-.. automodule:: raspapreco/models/models
+**Fazer link para histórias de usuário**
 
-.. automodule:: raspapreco/utils/dossie_manager
+As instruções de instalação estão no arquivo README e mais detalhadamente no
+arquivo shell-commands-history.
 
-.. automodule:: raspapreco/utils/site_scraper
+Os módulos de teste mostram o funcionamento do Sistema.
+
+Como exemplo rápido de funcionalidade, ver o código dos 
+scripts raspapreco/tests/ raspa_site_dinamico.py e site_scrapper_hot_test.py
+
+**raspa_site_dinamico.py**
+
+.. literalinclude:: raspapreco/tests/raspa_site_dinamico.py
+    :language: python3
+    :linenos:
+    :lines: 13-36
+
+**site_scrapper_hot_test.py**
+
+.. literalinclude:: raspapreco/tests/site_scrapper_hot_test.py
+    :language: python3
+    :linenos:
+    :lines: 46-71
+
+.. automodule:: raspapreco.utils.site_scraper
+    :members:
+
+.. automodule:: raspapreco.utils.dossie_manager
+    :members:
+
+.. automodule:: raspapreco.models.models
+    :members:
+
+.. automodule:: raspapreco.app
+    :members:
+
+.. automodule:: raspapreco.restless
+    :members:
 
 Indices and tables
 ==================

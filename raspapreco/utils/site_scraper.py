@@ -16,6 +16,11 @@ SCRAPY_DICT = \
        'descricao': ('span', {'class': 'value', 'itemprop': 'price'}),
        'foto': ('span', {'class': 'value', 'itemprop': 'price'})
        }},
+     'aliexpressdinamico':
+     {'url': 'https://pt.aliexpress.com/wholesale',
+      'param_names':
+      {'categoria': 'catId', 'descricao': 'SearchText'}
+      },
      'other':
      {'url': 'https://',
       'xpath': 'XPATH',  # or
@@ -46,7 +51,8 @@ class Scraper:
             time.sleep(0.2)  # Prevent site blocking
 
 
-def scrap_one(site, produto):
+def scrap_one(site, produto, debug=False):
+    """Recebe site e produto, faz raspagem do produto no site"""
     configs = SCRAPY_DICT.get(site.title)
     if not configs:
         raise KeyError(_('Site not configured: ' + site.title))
@@ -55,8 +61,10 @@ def scrap_one(site, produto):
     search_params = configs['param_names']
     search = {}
     search[search_params['descricao']] = produto.descricao
-    targets = configs['targets']
-
+    if site.targets:
+        targets = site.targets
+    else:
+        targets = configs['targets']
     html = requests.get(url, params=search)
     bs = BeautifulSoup(html.text, 'html.parser')
     if xpath:
@@ -66,8 +74,17 @@ def scrap_one(site, produto):
         for key, target in targets.items():
             target_name = target[0]
             target_atributes = target[1]
-            name_list = bs.findAll(target_name, target_atributes)
-            rows[key] = [row.getText() for row in name_list]
+            if len(target) > 2:
+                attribute = target[2]
+            else:
+                attribute = None
+            name_list = bs.find_all(target_name, target_atributes)
+            if debug:
+                print('Name List:', target, name_list)
+            if attribute:
+                rows[key] = [row[attribute] for row in name_list]
+            else:
+                rows[key] = [row.getText() for row in name_list]
     return rows
 
 

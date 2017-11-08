@@ -1,3 +1,2 @@
 . venv/bin/activate
-cd raspapreco
-celery -A restless.celery worker --loglevel=info
+celery -A raspapreco.restless.celery worker --loglevel=info
