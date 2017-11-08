@@ -1,12 +1,13 @@
 import sys
 import time
-from datetime import datetime
 
 import flask_restless
+import jinja2
 from celery import Celery
-from flask import Flask, Response, jsonify, redirect, url_for
+from flask import (Flask, request, Response, jsonify, redirect,
+                   render_template, url_for)
 from flask_cors import CORS
-from flask_jwt import JWT, jwt_required
+from flask_jwt import jwt_required
 from json_tricks import dumps
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
@@ -18,6 +19,11 @@ mysession = MySession(Base)
 session = mysession.session()
 
 app = Flask(__name__)
+my_loader = jinja2.ChoiceLoader([
+    app.jinja_loader,
+    jinja2.FileSystemLoader('raspapreco/site'),
+])
+app.jinja_loader = my_loader
 CORS(app)
 app.config.update(SECRET_KEY='secret_xxx',
                   JWT_AUTH_URL_RULE='/api/auth')
@@ -28,7 +34,7 @@ celery = Celery(app.name, broker='pyamqp://guest@localhost//',
 
 
 @celery.task(bind=True)
-def raspac(self, dossie_id):
+def raspac(self, dossie_id, refazer=False):
     """Background task that runs a long function with progress reports.
     https://blog.miguelgrinberg.com/post/using-celery-with-flask
     """
@@ -37,25 +43,31 @@ def raspac(self, dossie_id):
     proc = dossie.procedimento
     total = len(proc.produtos) * len(proc.sites)
     cont = 0
-    dossiemanager = DossieManager(session, proc, dossie)
     self.update_state(state='PROGRESS',
                       meta={'current': cont, 'total': total,
                             'status': 'Raspando Sites...'})
-    scraped = {}
-    for produto in proc.produtos:
-        produtos_scrapy = {}
-        for site in proc.sites:
-            self.update_state(state='PROGRESS',
-                              meta={'current': cont, 'total': total,
-                                    'status': 'Raspando Sites...'})
-            produtos_scrapy[site.id] = scrap_one(site, produto)
-            cont += 1
-        scraped[produto.id] = produtos_scrapy
-        time.sleep(0.2)  # Prevent site blocking
-    dossiemanager.raspa(scraped)
-    dossie.task_id = ''
-    session.merge(dossie)
-    session.commit()
+    # Já houve scrap anterior? Se houve, somente refaz se
+    # expressamente comandado
+    if refazer or (not dossie.produtos_encontrados):
+        # TODO: Tentar transformar linhas abaixo em um generator
+        scraped = {}
+        for produto in proc.produtos:
+            produtos_scrapy = {}
+            for site in proc.sites:
+                self.update_state(state='PROGRESS',
+                                  meta={'current': cont, 'total': total,
+                                        'status': 'Raspando Sites...'})
+                produtos_scrapy[site.id] = scrap_one(site, produto)
+                cont += 1
+            scraped[produto.id] = produtos_scrapy
+            time.sleep(0.2)  # Prevent site blocking
+        dossiemanager = DossieManager(session, proc, dossie)
+        dossiemanager.scraped = scraped
+        dossiemanager.monta_dossie()
+        dossie.task_id = ''
+        session.merge(dossie)
+        session.commit()
+    # FIM linhas
     return {'current': 100, 'total': 100,
             'status': 'Finalizado',
             'result': {'id': dossie.id, 'data': dossie.data}}
@@ -78,31 +90,37 @@ if len(sys.argv) > 1:
                 fdossie = f.read()
             return fdossie
 
-        @app.route('/api/scrap/<procedimento>')
-        def scrap(procedimento):
+        @jwt_required()
+        @app.route('/api/scrap')
+        def scrap():
+            procedimento = request.args.get('procedimento')
+            refazer = request.args.get('refazer')
             proc = session.query(Procedimento).filter(
                 Procedimento.id == procedimento).first()
-            executor = DossieManager(session, proc)
-            executor.raspa()
+            manager = DossieManager(session, proc)
+            manager.raspa(refazer == '1')
             return redirect(url_for('dossie_home') + '?procedimento_id=' +
                             str(proc.id))
 
 
 @app.route('/api/login_form')
 def login_form():
-    with open('raspapreco/site/login.html') as f:
-        flogin = f.read()
-    return flogin
+    return render_template('login.html')
 
 
 if app.config['DEBUG'] is False:
-    @app.route('/api/scrap/<procedimento>')
-    def scrapc(procedimento):
+    @jwt_required()
+    @app.route('/api/scrap')
+    def scrapc():
+        procedimento = request.args.get('procedimento')
+        refazer = request.args.get('refazer')
         proc = session.query(Procedimento).filter(
             Procedimento.id == procedimento).first()
         dossiemanager = DossieManager(session, proc)
-        task = raspac.delay(procedimento)
-        dossie = dossiemanager.inicia_dossie(task.id)
+        refaz = refazer == '1'
+        dossie = dossiemanager.inicia_dossie(refaz)
+        task = raspac.delay(dossie.id, refaz)
+        dossie.task_id = task.id
         session.merge(dossie)
         session.commit()
         return redirect('/raspapreco/dossie.html?procedimento_id=' +
@@ -147,6 +165,7 @@ def dossie_table(dossie_id):
     return dumps(dossiemanager.dossie_to_html_table())
 
 
+@jwt_required()
 @app.route('/api/procedimentos/delete_children/<procedimento>')
 def delete_children(procedimento):
     proc = session.query(Procedimento).filter(
