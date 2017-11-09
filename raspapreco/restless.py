@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 
@@ -76,6 +77,14 @@ def raspac(self, dossie_id, refazer=False):
 if len(sys.argv) > 1:
     if sys.argv[1] == '--debug':
         app.config['DEBUG'] = True
+
+
+if os.environ.get('DEBUG', 'None') == '1':
+        app.config['DEBUG'] = True
+
+
+
+if app.config['DEBUG']:
         app.config['static_url_path'] = '/static'
 
         @app.route('/')
