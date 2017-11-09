@@ -94,7 +94,7 @@ class DossieManager():
                 descricao_site = ''
                 url = ''
                 preco = None
-                for ind in range(len(listas[campos[0]])):
+                for ind in range(len(listas[campos[0]]) - 1):
                     if descricoes:
                         descricao_site = descricoes[ind]
                     if urls:
@@ -129,8 +129,13 @@ class DossieManager():
             tablehead = '<table class="table table-striped table-bordered' + \
                 ' table-responsive"><thead><tr>'
             tableheadtr = ''
-            for key in self._dossie.produtos_encontrados[0].to_dict():
-                tableheadtr = tableheadtr + '<th>' + key + '</th>'
+            produtoencontrado = self._dossie.produtos_encontrados[0]
+            if produtoencontrado.campos:
+                for key, value in produtoencontrado.campos.items():
+                    tableheadtr = tableheadtr + '<th>' + key + '</th>'
+            else:
+                for key in produtoencontrado.to_dict():
+                    tableheadtr = tableheadtr + '<th>' + key + '</th>'
             tablehead = tablehead + tableheadtr + '</tr></thead><tbody>'
 
             for produto in self._dossie.procedimento.produtos:
@@ -143,8 +148,16 @@ class DossieManager():
                 for produtoencontrado in q:
                     html = html + '<tr>'
                     linha = ''
-                    for key, value in produtoencontrado.to_dict().items():
-                        linha = linha + '<td>' + str(value) + '</td>'
+                    if produtoencontrado.campos:
+                        for key, value in produtoencontrado.campos.items():
+                            if len(value) > 40:
+                                value = value[0:40] + '...'
+                            linha = linha + '<td>' + str(value) + '</td>'
+                    else:
+                        for key, value in produtoencontrado.to_dict().items():
+                            if len(value) > 40:
+                                value = value[0:40] + '...'
+                            linha = linha + '<td>' + str(value) + '</td>'
                     html = html + linha + '</tr>'
                 html = tablehead + html + '</tbody></table>'
                 result[produto.descricao] = html

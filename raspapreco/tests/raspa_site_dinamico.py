@@ -26,7 +26,7 @@ if __name__ == '__main__':
                     }
     session.merge(site)
     session.commit()
-    print(site)
+    print(site.targets)
 
     produto = type('Produto', (object, ), {
         'id': '2', 'descricao': 'bolsa feminina'})

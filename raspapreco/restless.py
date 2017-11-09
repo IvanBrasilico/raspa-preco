@@ -170,9 +170,8 @@ def dossie_table(dossie_id):
 def delete_children(procedimento):
     proc = session.query(Procedimento).filter(
         Procedimento.id == procedimento).first()
-    proc.sites = []
-    proc.produtos = []
-    session.merge(proc)
+    proc.sites.clear()
+    proc.produtos.clear()
     session.commit()
     return jsonify({'message': 'procedimento atualizado'}), 200
 
@@ -186,14 +185,15 @@ def auth_func(**kw):
 if 'pytest' in sys.modules:
     manager = flask_restless.APIManager(app, session=session)
 else:
-    manager = flask_restless.APIManager(app, session=session,
+    manager = flask_restless.APIManager(app, session=session)
+    """,
                                         preprocessors=dict(POST=[auth_func],
                                                            GET=[auth_func],
                                                            GET_MANY=[
                                                                auth_func],
                                                            PUT=[auth_func],
                                                            DELETE=[auth_func]))
-
+    """
 # Create API endpoints, which will be available at /api/<tablename> by
 # default. Allowed HTTP methods can be specified as well.
 manager.create_api(Produto, methods=['GET', 'POST', 'DELETE', 'PUT'])

@@ -18,6 +18,8 @@ uma operação ou uma operação.
 
 [Projeto](https://github.com/IvanBrasilico/raspa-preco/)
 
+**Fazer documentação da interface**
+
 As instruções de instalação estão no arquivo README e mais detalhadamente no
 arquivo shell-commands-history.
 

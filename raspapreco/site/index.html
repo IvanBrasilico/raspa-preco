@@ -10,7 +10,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 </head>
 
-<body>
+<body style="background-color:#b8b9b1">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header header">
@@ -82,17 +82,36 @@
                 <label for="url">URL:</label>
                 <input type="text" class="form-control" id="url" name="url">
               </div>
-              <div class="col-xs-6">
-                <button class="btn btn-block btn-primary btn-default" id="btnsave">
-                  <i class="fa fa-save"></i>&nbsp;Gravar
-                </button>
-              </div>
-              <div class="col-xs-6">
-                <button class="btn btn-block btn-danger" id="btndelete">
-                  <i class="fa fa-trash"></i>&nbsp;Excluir
-                </button>
+              <div class="row">
+                <div class="col-xs-6">
+                  <button class="btn btn-block btn-primary btn-default" id="btnsave">
+                    <i class="fa fa-save"></i>&nbsp;Gravar
+                  </button>
+                </div>
+                <div class="col-xs-6">
+                  <button class="btn btn-block btn-danger" id="btndelete">
+                    <i class="fa fa-trash"></i>&nbsp;Excluir
+                  </button>
+                </div>
               </div>
             </form>
+            <div id="sitetargets" class="row">
+              <h4>Configuração do site</h4>
+              <div class="form-group">
+                <label for="targetkey">Campo:</label>
+                <input type="text" id="targetkey">
+                <label for="targetvalue">Caminho:</label>
+                <input type="text" id="targetvalue">
+                <button class="btn btn-success" id="btntarget">
+                  <i class="fa fa-plus"></i>&nbsp;Adicionar
+                </button>
+                <table class="table table-striped table-bordered table-responsive"
+                 cellspacing="0" cellpadding="0" id="targets">
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
           <div class="col-xs-4" id="sitelist">
             <h3>Sites cadastrados:</h3>
@@ -109,7 +128,8 @@
                 </button>
               </div>
             </div>
-            <table class="table table-striped table-bordered table-hover table-responsive" cellspacing="0" cellpadding="0" id="sites_table">
+            <table class="table table-striped table-bordered table-hover table-responsive"
+             cellspacing="0" cellpadding="0" id="sites_table">
               <tbody>
               </tbody>
             </table>
@@ -233,13 +253,12 @@
           </div>
         </div>
       </div>
-    </div>
-    <div id="bottom" class="row">
-      <div class="col-md-12">
-        Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+      <div id="bottom" class="row">
+        <div class="col-md-12">
+          Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+        </div>
       </div>
     </div>
-  </div>
   </div>
   <!-- /#bottom -->
   <script src="/static/js/jquery.min.js"></script>
@@ -272,6 +291,15 @@
           $("#id").val(data["id"]);
           $('#title').val(data["title"]);
           $('#url').val(data['url']);
+          $('#targets tbody tr').remove();
+          console.log(data["targets"]);
+          $.each(data["targets"], function (index, target) {
+            $('<tr>').append(
+              $('<td>').text(index),
+              $('<td>').text(JSON.stringify(target)),
+              $('<td>').html('<input type="button" value="x" onclick="deleteRow(this)" />')
+            ).appendTo('#targets')
+          });
         }
       });
     });
@@ -341,6 +369,9 @@
       list_filtered('produtos', 'descricao');
       list_filtered('procedimentos', 'nome');
     }
+    $(document).on('click', '#btntarget', function () {
+      inclui_target();
+    });
     $(document).on('click', '#btnfiltersites', function () {
       list_filtered('sites', 'title', $('#txtfiltersites').val());
     });
@@ -546,6 +577,7 @@
           if (cont == 2) { primeiro_campo = formField.name }
         }
       });
+      console.log(formdata);
       type = 'post';
       mensagem = classe + ' criado';
       save_url = url
@@ -637,7 +669,60 @@
         });
       }
     }
-
+    var inclui_target = function () {
+      /*$('<tr>').append(
+        $('<td>').text($('#targetkey').val()),
+        $('<td>').text($('#targetvalue').val()),
+        $('<td>').html('<input type="button" value="x" onclick="deleteRow(this)" />')
+      ).appendTo('#targets');*/
+      var targets = {};
+      var table = document.getElementById('targets');
+      var rowLength = table.rows.length;
+      for(var i=0; i<rowLength; i+=1){
+        var row = table.rows[i];
+        list = row.cells[1].textContent.split(',');
+        dict = {}
+        list2 = list[1].split(':');
+        if (list.length == 3){
+          if (list[1].indexOf('}') == -1){
+            dict[list2[0].substring(2, list2[0].length-1)] = list2[1].substring(1, list2[1].length-1);
+            list3 = list[2].split(':');
+            dict[list3[0].substring(1, list3[0].length-1)] = list3[1].substring(1, list3[1].length-3);
+            array = [list[0].substring(2, list[0].length-1), dict];
+          } else {
+            dict[list2[0].substring(2, list2[0].length-1)] = list2[1].substring(1, list2[1].length-2);
+            array = [list[0].substring(2, list[0].length-1), dict, list[2].substring(1, list[2].length-2)];
+          }
+        } else {
+          dict[list2[0].substring(2, list2[0].length-1)] = list2[1].substring(1, list2[1].length-3);
+          array = [list[0].substring(2, list[0].length-1), dict];
+        }
+        targets[row.cells[0].textContent] = array;
+      }
+      console.log(targets);
+      data = { "targets": targets }
+      console.log(data);
+      $.ajax({
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.api+json',
+          'Authorization': 'JWT ' + $('#token').val()
+        },
+        url: '/api/sites/' + $('#id').val(),
+        data: JSON.stringify(data),
+        type: 'put',
+        enctype: 'text/plain',
+        dataType: 'json',
+        success: function (data) {
+          $('#success').empty().append("OK")
+          $('#jsonsuccess').show();
+        },
+        error: function (data) {
+          $('#erro').empty().append(data.responseJSON["message"])
+          $('#jsonerror').show();
+        }
+      });
+    };
   </script>
 </body>
 
