@@ -80,36 +80,34 @@ if len(sys.argv) > 1:
 
 
 if os.environ.get('DEBUG', 'None') == '1':
-        app.config['DEBUG'] = True
-
-
+    app.config['DEBUG'] = True
 
 if app.config['DEBUG']:
-        app.config['static_url_path'] = '/static'
+    app.config['static_url_path'] = '/static'
 
-        @app.route('/')
-        def hello_world():
-            with open('raspapreco/site/index.html') as f:
-                home = f.read()
-            return home
+    @app.route('/')
+    def hello_world():
+        with open('raspapreco/site/index.html') as f:
+            home = f.read()
+        return home
 
-        @app.route('/api/dossie_home')
-        def dossie_home():
-            with open('raspapreco/site/dossie.html') as f:
-                fdossie = f.read()
-            return fdossie
+    @app.route('/api/dossie_home')
+    def dossie_home():
+        with open('raspapreco/site/dossie.html') as f:
+            fdossie = f.read()
+        return fdossie
 
-        @jwt_required()
-        @app.route('/api/scrap')
-        def scrap():
-            procedimento = request.args.get('procedimento')
-            refazer = request.args.get('refazer')
-            proc = session.query(Procedimento).filter(
-                Procedimento.id == procedimento).first()
-            manager = DossieManager(session, proc)
-            manager.raspa(refazer == '1')
-            return redirect(url_for('dossie_home') + '?procedimento_id=' +
-                            str(proc.id))
+    @jwt_required()
+    @app.route('/api/scrap')
+    def scrap():
+        procedimento = request.args.get('procedimento')
+        refazer = request.args.get('refazer')
+        proc = session.query(Procedimento).filter(
+            Procedimento.id == procedimento).first()
+        manager = DossieManager(session, proc)
+        manager.raspa(refazer == '1')
+        return redirect(url_for('dossie_home') + '?procedimento_id=' +
+                        str(proc.id))
 
 
 @app.route('/api/login_form')
