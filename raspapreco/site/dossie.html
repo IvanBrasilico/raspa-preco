@@ -12,6 +12,18 @@
         .modal.large {
             width: 80%;
         }
+
+        .ui-progressbar {
+            position: relative;
+        }
+
+        .progress-label {
+            position: absolute;
+            left: 50%;
+            top: 4px;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
+        }
     </style>
 </head>
 
@@ -103,6 +115,10 @@
                         <h3>Dossiês</h3>
                         <div id="dossiesprocedimento">
                             <div id="progress"></div>
+
+                            <div id="progressbar">
+                                <div class="progress-label"></div>
+                            </div>
                             <table class="table table-striped table-bordered table-responsive" cellspacing="0" cellpadding="0" id="dossies_table">
                                 <tbody>
                                 </tbody>
@@ -192,6 +208,18 @@
                 // update UI
                 percent = parseInt(data['current'] * 100 / data['total']);
                 nanobar.go(percent);
+                var progressbar = $("#progressbar"),
+                    progressLabel = $(".progress-label");
+                progressbar.progressbar({
+                    value: false,
+                    change: function () {
+                        progressLabel.text(progressbar.progressbar("value") + "%");
+                    },
+                    complete: function () {
+                        progressLabel.text("Raspagem finalizada!");
+                    }
+                });
+                progressbar.progressbar("value", percent);
                 $(status_div.childNodes[1]).text(percent + '%');
                 $(status_div.childNodes[2]).text(data['status']);
                 if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
@@ -236,9 +264,9 @@
             $("#myModal").modal()
         }
         $(document).on('click', '#btndoprocedimento', function () {
-            window.location.href= "/api/scrap?procedimento=" +
-                             $('#idprocedimento').val() +
-                             "&refazer=1";
+            window.location.href = "/api/scrap?procedimento=" +
+                $('#idprocedimento').val() +
+                "&refazer=1";
         });
     </script>
 </body>

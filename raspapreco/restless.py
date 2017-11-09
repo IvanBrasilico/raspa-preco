@@ -185,15 +185,14 @@ def auth_func(**kw):
 if 'pytest' in sys.modules:
     manager = flask_restless.APIManager(app, session=session)
 else:
-    manager = flask_restless.APIManager(app, session=session)
-    """,
+    manager = flask_restless.APIManager(app, session=session,
                                         preprocessors=dict(POST=[auth_func],
                                                            GET=[auth_func],
                                                            GET_MANY=[
                                                                auth_func],
                                                            PUT=[auth_func],
                                                            DELETE=[auth_func]))
-    """
+
 # Create API endpoints, which will be available at /api/<tablename> by
 # default. Allowed HTTP methods can be specified as well.
 manager.create_api(Produto, methods=['GET', 'POST', 'DELETE', 'PUT'])

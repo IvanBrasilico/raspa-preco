@@ -150,14 +150,22 @@ class DossieManager():
                     linha = ''
                     if produtoencontrado.campos:
                         for key, value in produtoencontrado.campos.items():
+                            value = str(value)
+                            linha = linha + '<td'
                             if len(value) > 40:
+                                linha = linha + ' data-content="' + value + '"' + \
+                                    ' onmouseover=$(this).popover()'
                                 value = value[0:40] + '...'
-                            linha = linha + '<td>' + str(value) + '</td>'
+                            linha = linha + '>' + value + '</td>'
                     else:
                         for key, value in produtoencontrado.to_dict().items():
+                            value = str(value)
+                            linha = linha + '<td'
                             if len(value) > 40:
+                                linha = linha + ' data-content="' + value + '"' + \
+                                    ' onmouseover=$(this).popover()'
                                 value = value[0:40] + '...'
-                            linha = linha + '<td>' + str(value) + '</td>'
+                            linha = linha + '>' + value + '</td>'
                     html = html + linha + '</tr>'
                 html = tablehead + html + '</tbody></table>'
                 result[produto.descricao] = html
