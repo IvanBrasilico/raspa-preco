@@ -153,8 +153,8 @@ class DossieManager():
                             value = str(value)
                             linha = linha + '<td'
                             if len(value) > 40:
-                                linha = linha + ' data-content="' + value + '"' + \
-                                    ' onmouseover=$(this).popover()'
+                                linha = linha + ' data-content="' + value + \
+                                    '"' + ' onmouseover=$(this).popover()'
                                 value = value[0:40] + '...'
                             linha = linha + '>' + value + '</td>'
                     else:
@@ -162,8 +162,8 @@ class DossieManager():
                             value = str(value)
                             linha = linha + '<td'
                             if len(value) > 40:
-                                linha = linha + ' data-content="' + value + '"' + \
-                                    ' onmouseover=$(this).popover()'
+                                linha = linha + ' data-content="' + value + \
+                                    '"' + ' onmouseover=$(this).popover()'
                                 value = value[0:40] + '...'
                             linha = linha + '>' + value + '</td>'
                     html = html + linha + '</tr>'
