@@ -105,8 +105,7 @@
                 <button class="btn btn-success" id="btntarget">
                   <i class="fa fa-plus"></i>&nbsp;Adicionar
                 </button>
-                <table class="table table-striped table-bordered table-responsive"
-                 cellspacing="0" cellpadding="0" id="targets">
+                <table class="table table-striped table-bordered table-responsive" cellspacing="0" cellpadding="0" id="targets">
                   <tbody>
                   </tbody>
                 </table>
@@ -128,8 +127,7 @@
                 </button>
               </div>
             </div>
-            <table class="table table-striped table-bordered table-hover table-responsive"
-             cellspacing="0" cellpadding="0" id="sites_table">
+            <table class="table table-striped table-bordered table-hover table-responsive" cellspacing="0" cellpadding="0" id="sites_table">
               <tbody>
               </tbody>
             </table>
@@ -670,32 +668,34 @@
       }
     }
     var inclui_target = function () {
-      /*$('<tr>').append(
-        $('<td>').text($('#targetkey').val()),
-        $('<td>').text($('#targetvalue').val()),
-        $('<td>').html('<input type="button" value="x" onclick="deleteRow(this)" />')
-      ).appendTo('#targets');*/
+      if ($('#targetkey').val()){
+        $('<tr>').append(
+          $('<td>').text($('#targetkey').val()),
+          $('<td>').text($('#targetvalue').val()),
+          $('<td>').html('<input type="button" value="x" onclick="deleteRow(this)" />')
+        ).appendTo('#targets');
+      }
       var targets = {};
       var table = document.getElementById('targets');
       var rowLength = table.rows.length;
-      for(var i=0; i<rowLength; i+=1){
+      for (var i = 0; i < rowLength; i += 1) {
         var row = table.rows[i];
         list = row.cells[1].textContent.split(',');
         dict = {}
         list2 = list[1].split(':');
-        if (list.length == 3){
-          if (list[1].indexOf('}') == -1){
-            dict[list2[0].substring(2, list2[0].length-1)] = list2[1].substring(1, list2[1].length-1);
+        if (list.length == 3) {
+          if (list[1].indexOf('}') == -1) {
+            dict[list2[0].substring(2, list2[0].length - 1)] = list2[1].substring(1, list2[1].length - 1);
             list3 = list[2].split(':');
-            dict[list3[0].substring(1, list3[0].length-1)] = list3[1].substring(1, list3[1].length-3);
-            array = [list[0].substring(2, list[0].length-1), dict];
+            dict[list3[0].substring(1, list3[0].length - 1)] = list3[1].substring(1, list3[1].length - 3);
+            array = [list[0].substring(2, list[0].length - 1), dict];
           } else {
-            dict[list2[0].substring(2, list2[0].length-1)] = list2[1].substring(1, list2[1].length-2);
-            array = [list[0].substring(2, list[0].length-1), dict, list[2].substring(1, list[2].length-2)];
+            dict[list2[0].substring(2, list2[0].length - 1)] = list2[1].substring(1, list2[1].length - 2);
+            array = [list[0].substring(2, list[0].length - 1), dict, list[2].substring(1, list[2].length - 2)];
           }
         } else {
-          dict[list2[0].substring(2, list2[0].length-1)] = list2[1].substring(1, list2[1].length-3);
-          array = [list[0].substring(2, list[0].length-1), dict];
+          dict[list2[0].substring(2, list2[0].length - 1)] = list2[1].substring(1, list2[1].length - 3);
+          array = [list[0].substring(2, list[0].length - 1), dict];
         }
         targets[row.cells[0].textContent] = array;
       }
