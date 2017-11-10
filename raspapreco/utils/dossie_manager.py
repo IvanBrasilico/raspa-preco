@@ -94,6 +94,8 @@ class DossieManager():
                 descricao_site = ''
                 url = ''
                 preco = None
+                # TODO: fazer um alerta, pois se está retornando número de linhas
+                # diferentes em campos raspagem foi inconsistente por algum motivo
                 minor_length = 9999999
                 for key in campos:
                     if len(listas[key]) < minor_length:
