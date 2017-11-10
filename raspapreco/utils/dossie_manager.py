@@ -111,7 +111,10 @@ class DossieManager():
                     )
                     camposencontrados = {}
                     for campo in campos:
-                        camposencontrados[campo] = listas[campo][ind]
+                        listavaloresdocampo = listas.get(campo)
+                        if listavaloresdocampo and \
+                                ind < len(listavaloresdocampo):
+                            camposencontrados[campo] = listavaloresdocampo[ind]
                     produtoencontrado.campos = camposencontrados
                     session.add(produtoencontrado)
         session.commit()
