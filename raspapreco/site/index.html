@@ -615,10 +615,18 @@
     var table_save = function () {
       $('#jsonerror').hide();
       url = '/api/procedimentos';
-      deleteurl = '/api/procedimentos/delete_children';
       oid = $("#idprocedimento").val()
+      url = '/api/procedimentos/' + id
+      headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.api+json',
+        'Authorization': 'JWT ' + $('#token').val()
+      }
       if (oid) {
         var datasites = [];
+        var dataprodutos = [];
+        var datasitesremove = [];
+        var dataprodutosremove = [];
         $('#siteac_table tr td:first-child').each(function () {
           datasites.push({ "id": $(this).text() });
         });
@@ -626,19 +634,53 @@
         $('#produtoac_table tr td:first-child').each(function () {
           dataprodutos.push({ "id": $(this).text() });
         });
+        $.ajax({
+          dataType: 'json',
+          url: url,
+          headers: headers,
+          type: 'get',
+          success: function (data) {
+            length = datasites.length;
+            $.each(data["sites"], function (i, site) {
+              removido = true;
+              for (r = 0; r < length; r++){
+                console.log(datasites)
+                console.log(datasites[r])
+                if (datasites[r]['id'] == site.id){
+                  removido = false;
+                  break;
+                }
+              }
+              if (removido) {
+                datasitesremove.push({ "id": site.id });
+              }
+            });
+            length = dataprodutos.length;
+            $.each(data["produtos"], function (i, produto) {
+              removido = true;
+              for (r = 0; r < length; r++){
+                if (dataprodutos[r]['id'] == produto.id){
+                  removido = false;
+                  break;
+                }
+              }
+              if (removido) {
+                dataprodutosremove.push({ "id": produto.id });
+              }
+            });
+          }
+        });
         data = {
           'produtos': { 'add': dataprodutos },
           'sites': { 'add': datasites }
         }
-        deleteurl = deleteurl + '/' + oid;
         $.ajax({
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.api+json',
-            'Authorization': 'JWT ' + $('#token').val()
-          },
-          url: deleteurl,
-          type: 'get',
+          headers: headers,
+          url: url,
+          data: JSON.stringify(data),
+          type: 'put',
+          enctype: 'text/plain',
+          dataType: 'json',
           success: function (data) {
           },
           error: function (data) {
@@ -646,14 +688,13 @@
             $('#jsonerror').show();
           }
         });
-        save_url = url + '/' + oid;
+        data = {
+          'produtos': { 'remove': dataprodutosremove },
+          'sites': { 'remove': datasitesremove }
+        }
         $.ajax({
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.api+json',
-            'Authorization': 'JWT ' + $('#token').val()
-          },
-          url: save_url,
+          headers: headers,
+          url: url,
           data: JSON.stringify(data),
           type: 'put',
           enctype: 'text/plain',
@@ -668,7 +709,7 @@
       }
     }
     var inclui_target = function () {
-      if ($('#targetkey').val()){
+      if ($('#targetkey').val()) {
         $('<tr>').append(
           $('<td>').text($('#targetkey').val()),
           $('<td>').text($('#targetvalue').val()),
