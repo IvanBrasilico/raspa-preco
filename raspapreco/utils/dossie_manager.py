@@ -94,7 +94,11 @@ class DossieManager():
                 descricao_site = ''
                 url = ''
                 preco = None
-                for ind in range(len(listas[campos[0]]) - 1):
+                minor_length = 9999999
+                for key in campos:
+                    if len(listas[key]) < minor_length:
+                        minor_length = len(listas[key])
+                for ind in range(minor_length - 1):
                     if descricoes:
                         descricao_site = descricoes[ind]
                     if urls:
@@ -124,6 +128,8 @@ class DossieManager():
         """Dado um dossiê, retorna seus dados formatados
         Se dossie não fornecido ou vazio, retorna None
         """
+        # TODO: Separar tabela por site agora que sites são "dinâmicos",
+        # isto é, podem ter campos diferentes.
         result = None
         if self._dossie and self._dossie.produtos_encontrados:
             result = OrderedDict()
