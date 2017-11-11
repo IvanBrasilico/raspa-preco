@@ -82,6 +82,9 @@ ver arquivo celery.sh
 pip install alembic
 alembic init alembic
 ## Configurar Banco de Dados em alembic/env.py
+# Colocar:  connectable = engine em run_migrations_online()
+# Criar engine do BD
+
 # A cada mudança, rodar os comandos:
 alembic revision --autogenerate -m "Descrever a mudança"
 alembic upgrade head
