@@ -181,7 +181,7 @@ def auth_func(**kw):
     pass
 
 
-if 'pytest' in sys.modules: # No authentication on tests
+if 'pytest' in sys.modules:  # No authentication on tests
     manager = flask_restless.APIManager(app, session=session)
 else:
     manager = flask_restless.APIManager(app, session=session,
