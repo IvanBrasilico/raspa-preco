@@ -77,12 +77,15 @@ def raspac(self, dossie_id, refazer=False):
 if len(sys.argv) > 1:
     if sys.argv[1] == '--debug':
         app.config['DEBUG'] = True
+        app.config['STATICSERVER'] = True
 
 
-if os.environ.get('DEBUG', 'None') == '1':
-    app.config['DEBUG'] = True
+app.config['DEBUG'] = os.environ.get('DEBUG', 'None') == '1'
 
-if app.config['DEBUG']:
+app.config['STATICSERVER'] = os.environ.get('STATICSERVER', 'None') == '1'
+
+
+if app.config['STATICSERVER']:
     app.config['static_url_path'] = '/static'
 
     @app.route('/')
@@ -97,6 +100,7 @@ if app.config['DEBUG']:
             fdossie = f.read()
         return fdossie
 
+if app.config['DEBUG']:
     @jwt_required()
     @app.route('/api/scrap')
     def scrap():
@@ -108,14 +112,7 @@ if app.config['DEBUG']:
         manager.raspa(refazer == '1')
         return redirect(url_for('dossie_home') + '?procedimento_id=' +
                         str(proc.id))
-
-
-@app.route('/api/login_form')
-def login_form():
-    return render_template('login.html')
-
-
-if app.config['DEBUG'] is False:
+else:
     @jwt_required()
     @app.route('/api/scrap')
     def scrapc():
@@ -130,7 +127,7 @@ if app.config['DEBUG'] is False:
         dossie.task_id = task.id
         session.merge(dossie)
         session.commit()
-        return redirect('/raspapreco/dossie.html?procedimento_id=' +
+        return redirect(url_for('dossie_home') + '?procedimento_id=' +
                         str(proc.id))
 
 
@@ -164,6 +161,7 @@ def scrapprogress(task_id):
     return jsonify(response)
 
 
+@jwt_required()
 @app.route('/api/dossietable/<dossie_id>')
 def dossie_table(dossie_id):
     dossie = session.query(Dossie).filter(
@@ -172,15 +170,9 @@ def dossie_table(dossie_id):
     return dumps(dossiemanager.dossie_to_html_table())
 
 
-@jwt_required()
-@app.route('/api/procedimentos/delete_children/<procedimento>')
-def delete_children(procedimento):
-    proc = session.query(Procedimento).filter(
-        Procedimento.id == procedimento).first()
-    proc.sites.clear()
-    proc.produtos.clear()
-    session.commit()
-    return jsonify({'message': 'procedimento atualizado'}), 200
+@app.route('/api/login_form')
+def login_form():
+    return render_template('login.html')
 
 
 # Create the Flask-Restless API manager.
@@ -189,7 +181,7 @@ def auth_func(**kw):
     pass
 
 
-if 'pytest' in sys.modules:
+if 'pytest' in sys.modules: # No authentication on tests
     manager = flask_restless.APIManager(app, session=session)
 else:
     manager = flask_restless.APIManager(app, session=session,

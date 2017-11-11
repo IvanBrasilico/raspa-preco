@@ -7,7 +7,7 @@ from raspapreco.restless import app
 
 class User():
     # proxy for a database of users
-    user_database = {'ivan': ('ivan', 'ivan1234')}
+    user_database = {'ivan': ('ivan', 'ivan')}
 
     def __init__(self, username, password):
         self.id = username
