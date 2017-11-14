@@ -24,14 +24,20 @@ class TestModel(unittest.TestCase):
                    text='<span class="value" itemprop="price">21,45</a>' +
                    '<span class="value" itemprop="price">22,56</a>')
         site = type('Site', (object, ), {
-                    'id': '1', 'title': 'nowhere', 'targets': None})
+                    'id': '1', 'title': 'nowhere',
+                    'targets': None, 'url': 'none', 'params_names': None})
         site_com_targets = \
             type('Site', (object, ),
                  {
                 'id': '1',
                 'title': 'aliexpress',
-                'targets': {
-                    'preco': ('span', {'class': 'value', 'itemprop': 'price'})}
+                'url': 'https://pt.aliexpress.com/wholesale',
+                'params_names': {'categoria': 'catId', 'descricao': 'SearchText'},
+                'targets': {'preco': ('span', {'class': 'value', 'itemprop': 'price'}),
+                            'url': ('span', {'class': 'value', 'itemprop': 'price'}),
+                            'descricao': ('span', {'class': 'value', 'itemprop': 'price'}),
+                            'foto': ('span', {'class': 'value', 'itemprop': 'price'})
+                            }
             })
         produto = type('Produto', (object, ), {
                        'id': '2', 'descricao': 'bolsa feminina'})
@@ -43,8 +49,7 @@ class TestModel(unittest.TestCase):
         self.assertRaises(AttributeError, scrap.scrap)
         scrap = Scraper(sites, produtos)
         self.assertRaises(KeyError, scrap.scrap)
-        site.title = 'aliexpress'
-        sites.append(site_com_targets)
+        sites = [site_com_targets]
         scrap = Scraper(sites, produtos)
         scrap.scrap()
         assert scrap.scraped.get(produto.id) is not None

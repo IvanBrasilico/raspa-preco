@@ -97,7 +97,9 @@ class Site(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(20), unique=True)
     url = Column(String(200))
-    targets = Column(PickleType)
+    params_names = Column(PickleType)
+    targets = relationship(
+        'Target', back_populates='site')
     procedimentos = relationship(
         'Procedimento',
         secondary=site_procedimento,
@@ -109,6 +111,30 @@ class Site(Base):
         self.title = title
         self.url = url
 
+
+class Target(Base):
+    """Endereço dos targets buscados"""
+
+    __tablename__ = 'targets'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50))
+    target = Column(String(50))
+    attributes = Column(String(100))
+    getter = Column(String(20))
+    site_id = Column(Integer, ForeignKey('sites.id'))
+    site = relationship(
+        'Site', back_populates='targets')
+
+    def __init__(self, name, target, attributes=None, 
+                 getter=None, site=None):
+        self.name = name
+        self.target = target
+        self.attributes = attributes
+        self.getter = getter
+        if site:
+            self.site_id = site.id
+    
 
 class Dossie(Base):
     """Resulta de um "scrap" de um Procedimento em uma

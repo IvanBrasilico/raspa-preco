@@ -1,6 +1,8 @@
+import json
 import time
 
 import requests
+
 from bs4 import BeautifulSoup
 
 import raspapreco.localizations
@@ -53,38 +55,31 @@ class Scraper:
 
 def scrap_one(site, produto, debug=False):
     """Recebe site e produto, faz raspagem do produto no site"""
-    configs = SCRAPY_DICT.get(site.title)
-    if not configs:
-        raise KeyError(_('Site not configured: ' + site.title))
-    url = configs['url']
-    xpath = configs.get('xpath')
-    search_params = configs['param_names']
-    search = {}
-    search[search_params['descricao']] = produto.descricao
-    if site.targets:
-        targets = site.targets
-    else:
-        targets = configs['targets']
+    url =  site.url
+    search_params = site.params_names
+    search = dict()
+    if search_params:
+        search[search_params['descricao']] = produto.descricao
+    targets = site.targets
+    if not targets or not search_params:
+        raise KeyError(_('Site not correctly configured: ' + site.title))
     html = requests.get(url, params=search)
     bs = BeautifulSoup(html.text, 'html.parser')
-    if xpath:
-        pass  # TODO: implementar busca por XPATH
-    else:
-        rows = {}
-        for key, target in targets.items():
-            target_name = target[0]
-            target_atributes = target[1]
-            if len(target) > 2:
-                attribute = target[2]
-            else:
-                attribute = None
-            name_list = bs.find_all(target_name, target_atributes)
-            if debug:
-                print('Name List:', target, name_list)
-            if attribute:
-                rows[key] = [row[attribute] for row in name_list]
-            else:
-                rows[key] = [row.getText() for row in name_list]
+    rows = {}
+    for target in targets:
+        target_name = target.target
+        target_attributes = dict(json.loads(target.attributes))
+        getter = target.getter
+        print(target_name)
+        print(target_attributes)
+        print(getter)
+        name_list = bs.find_all(target_name, target_attributes)
+        if debug:
+            print('Name List:', target, name_list)
+        if getter:
+            rows[target.name] = [row[getter] for row in name_list]
+        else:
+            rows[target.name] = [row.getText() for row in name_list]
     return rows
 
 

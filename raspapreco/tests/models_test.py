@@ -26,8 +26,10 @@ class TestModel(unittest.TestCase):
         assert site.title == 'teste'
         assert site.url == 'url'
         site.targets = {'1': 1, '2': 2}
+        site.param_names = {'categoria': 'catId', 'descricao': 'SearchText'}
         self.session.add(site)
         self.session.commit()
+        assert site.param_names['categoria'] == 'catId'
         assert site.targets['1'] == 1
         assert site.targets['2'] == 2
         # assert site.id is not None
