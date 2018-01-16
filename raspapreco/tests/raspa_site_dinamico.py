@@ -1,6 +1,6 @@
 import sys
 
-from raspapreco.models.models import Base, MySession, Target, Site
+from raspapreco.models.models import Base, MySession, Site, Target
 from raspapreco.utils.site_scraper import scrap_one
 
 if __name__ == '__main__':
@@ -23,12 +23,16 @@ if __name__ == '__main__':
         session.add(site)
 
     site.params_names = {'descricao': 'SearchText'}
-    
-    target1 = Target('preco', 'span', '{"class": "value", "itemprop": "price"}')
+
+    target1 = Target(
+        'preco', 'span', '{"class": "value", "itemprop": "price"}'
+    )
     target2 = Target('unidade', 'span', '{"class": "unit"}')
-    target3 = Target('url', 'span', '{"class": "history-item product "}', getter='href')
+    target3 = Target(
+        'url', 'span', '{"class": "history-item product "}', getter='href'
+    )
     target4 = Target('descricao', 'span', '{"class": "history-item product "}')
-    
+
     site.targets = [target1, target2, target3, target4]
     print(site.targets)
     session.merge(site)

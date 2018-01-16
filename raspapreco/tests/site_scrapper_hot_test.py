@@ -1,7 +1,7 @@
 from datetime import date
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
-                                      Produto, ProdutoEncontrado, Site)
+                                      Produto, ProdutoEncontrado, Site, Target)
 from raspapreco.utils.site_scraper import Scraper, extrai_valor
 
 mysession = MySession(Base, test=True)
@@ -38,7 +38,14 @@ if not proc.produtos:
         print('Caneta não existe, criando...')
         caneta = Produto('Caneta de 10 cores', 1.99)
         proc.produtos.append(caneta)
+    ali.params_names = {'descricao': 'SearchText'}
 
+    target1 = Target('preco', 'span', '{"class": "value", "itemprop": "price"}')
+    target2 = Target('unidade', 'span', '{"class": "unit"}')
+    target3 = Target('url', 'span', '{"class": "history-item product "}', getter='href')
+    target4 = Target('descricao', 'span', '{"class": "history-item product "}')
+
+    ali.targets = [target1, target2, target3, target4]
     session.merge(proc)
     session.commit()
 

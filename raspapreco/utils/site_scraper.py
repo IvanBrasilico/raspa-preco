@@ -2,7 +2,6 @@ import json
 import time
 
 import requests
-
 from bs4 import BeautifulSoup
 
 import raspapreco.localizations
@@ -55,7 +54,7 @@ class Scraper:
 
 def scrap_one(site, produto, debug=False):
     """Recebe site e produto, faz raspagem do produto no site"""
-    url =  site.url
+    url = site.url
     search_params = site.params_names
     search = dict()
     if search_params:
@@ -66,6 +65,8 @@ def scrap_one(site, produto, debug=False):
     html = requests.get(url, params=search)
     bs = BeautifulSoup(html.text, 'html.parser')
     rows = {}
+    print(search_params)
+    print(targets)
     for target in targets:
         target_name = target.target
         target_attributes = dict(json.loads(target.attributes))

@@ -126,7 +126,7 @@ class Target(Base):
     site = relationship(
         'Site', back_populates='targets')
 
-    def __init__(self, name, target, attributes=None, 
+    def __init__(self, name, target, attributes=None,
                  getter=None, site=None):
         self.name = name
         self.target = target
@@ -134,7 +134,7 @@ class Target(Base):
         self.getter = getter
         if site:
             self.site_id = site.id
-    
+
 
 class Dossie(Base):
     """Resulta de um "scrap" de um Procedimento em uma

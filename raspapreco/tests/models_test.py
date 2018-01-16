@@ -2,7 +2,7 @@ import unittest
 from datetime import date
 
 from raspapreco.models.models import (Base, Dossie, MySession, Procedimento,
-                                      Produto, ProdutoEncontrado, Site)
+                                      Produto, ProdutoEncontrado, Site, Target)
 
 
 class TestModel(unittest.TestCase):
@@ -25,13 +25,13 @@ class TestModel(unittest.TestCase):
         site = Site('teste', 'url')
         assert site.title == 'teste'
         assert site.url == 'url'
-        site.targets = {'1': 1, '2': 2}
+        target = Target('1', '1')
+        site.targets = [target]
         site.param_names = {'categoria': 'catId', 'descricao': 'SearchText'}
         self.session.add(site)
         self.session.commit()
         assert site.param_names['categoria'] == 'catId'
-        assert site.targets['1'] == 1
-        assert site.targets['2'] == 2
+        assert site.targets is not None
         # assert site.id is not None
 
     def test_produto(self):
