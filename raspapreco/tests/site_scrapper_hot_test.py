@@ -40,10 +40,16 @@ if not proc.produtos:
         proc.produtos.append(caneta)
     ali.params_names = {'descricao': 'SearchText'}
 
-    target1 = Target('preco', 'span', '{"class": "value", "itemprop": "price"}')
+    target1 = Target(
+        'preco', 'span', '{"class": "value", "itemprop": "price"}'
+    )
     target2 = Target('unidade', 'span', '{"class": "unit"}')
-    target3 = Target('url', 'span', '{"class": "history-item product "}', getter='href')
-    target4 = Target('descricao', 'span', '{"class": "history-item product "}')
+    target3 = Target(
+        'url', 'span', '{"class": "history-item product "}', getter='href'
+    )
+    target4 = Target(
+        'descricao', 'span', '{"class": "history-item product "}'
+    )
 
     ali.targets = [target1, target2, target3, target4]
     session.merge(proc)

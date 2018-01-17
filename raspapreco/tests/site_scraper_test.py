@@ -1,7 +1,6 @@
 import unittest
 
 import requests_mock
-
 from raspapreco.utils.site_scraper import Scraper, make_floatlist
 
 
@@ -26,7 +25,7 @@ class TestModel(unittest.TestCase):
         site = type('Site', (object, ), {
                     'id': '1', 'title': 'nowhere',
                     'targets': None, 'url': 'none', 'params_names': None})
-        '''site_com_targets = \
+        """site_com_targets = \
             type('Site', (object, ),
                  {
                 'id': '1',
@@ -36,11 +35,17 @@ class TestModel(unittest.TestCase):
                 {'categoria': 'catId', 'descricao': 'SearchText'},
                 'targets':
                 {'preco': ('span', {'class': 'value', 'itemprop': 'price'}),
-                            'url': ('span', {'class': 'value', 'itemprop': 'price'}),
-                            'descricao': ('span', {'class': 'value', 'itemprop': 'price'}),
-                            'foto': ('span', {'class': 'value', 'itemprop': 'price'})
+                            'url':
+                                ('span',
+                                    {'class': 'value', 'itemprop': 'price'}),
+                            'descricao':
+                                ('span',
+                                    {'class': 'value', 'itemprop': 'price'}),
+                            'foto':
+                                ('span',
+                                    {'class': 'value', 'itemprop': 'price'})
                             }
-            })'''
+            })"""
         produto = type('Produto', (object, ), {
                        'id': '2', 'descricao': 'bolsa feminina'})
         sites = [site]
@@ -51,10 +56,10 @@ class TestModel(unittest.TestCase):
         self.assertRaises(AttributeError, scrap.scrap)
         scrap = Scraper(sites, produtos)
         self.assertRaises(KeyError, scrap.scrap)
-        '''sites = [site_com_targets]
+        """sites = [site_com_targets]
         scrap = Scraper(sites, produtos)
         scrap.scrap()
         assert scrap.scraped.get(produto.id) is not None
         result = scrap.scraped.get(produto.id).get(site.id).get('preco')
         assert result is not None
-        assert result == ['21,45', '22,56']'''
+        assert result == ['21,45', '22,56']"""

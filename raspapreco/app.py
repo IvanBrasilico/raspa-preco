@@ -30,6 +30,7 @@ def authenticate(username, password):
 
 
 def identity(payload):
+    user = ''
     user_id = payload['identity']
     user_entry = User.get(user_id)
     if user_entry is not None:
