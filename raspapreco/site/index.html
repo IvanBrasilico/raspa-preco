@@ -143,7 +143,7 @@
                 <label for="descricao">Descrição:</label>
                 <input type="text" class="form-control" id="descricao" name="descricao">
                 <label for="preco_declarado">Preço declarado:</label>
-                <input type="text" class="form-control" id="preco_declarado" name="preco_declarado">
+                <input type="money" class="form-control" id="preco_declarado" name="preco_declarado">
               </div>
               <div class="col-xs-6">
                 <button class="btn btn-block btn-primary btn-default" id="btnsaveproduto">
@@ -211,7 +211,7 @@
               <hr>
               <div class="col-xs-6">
                 <div class="ui-widget">
-                  <input id="siteac" name="siteac" size="30%" placeholder="Entre título do site" />
+                  <input id="siteac" class="form-control" name="siteac" size="30%" placeholder="Entre título do site" />
                 </div>
                 <table class="table table-striped table-bordered table-responsive" cellspacing="0" cellpadding="0" id="siteac_table">
                   <tbody>
@@ -220,7 +220,7 @@
               </div>
               <div class="col-xs-6">
                 <div class="ui-widget">
-                  <input id="produtoac" name="produtoac" size="30%" placeholder="Entre descricao do produto" />
+                  <input id="produtoac" class="form-control" name="produtoac" size="30%" placeholder="Entre descricao do produto" />
                 </div>
                 <table class="table table-striped table-bordered table-responsive" cellspacing="0" cellpadding="0" id="produtoac_table">
                   <tbody>
@@ -262,6 +262,7 @@
   <script src="/static/js/jquery.min.js"></script>
   <script src="/static/js/bootstrap.min.js"></script>
   <script src="/static/js/jquery-ui.min.js"></script>
+  <script src="/static/js/jquery.maskMoney.min.js"></script>
   <script type="text/javascript">
     $("#frmsite").submit(function (event) {
       // Stop form from submitting normally
@@ -273,6 +274,12 @@
     $("#frmprocedimento").submit(function (event) {
       event.preventDefault();
     });
+    $(function () {
+      $('[type=money]').maskMoney({
+        thousands: '.',
+        decimal: ','
+      });
+    })
     $(document).on('click', '#sites_table tbody tr', function () {
       id = $(this).find('td').eq(0).text();
       headers = {
@@ -295,7 +302,7 @@
             $('<tr>').append(
               $('<td>').text(index),
               $('<td>').text(JSON.stringify(target)),
-              $('<td>').html('<input type="button" value="x" onclick="deleteRow(this)" />')
+              $('<td>').html('<input type="button" class="btn  btn-danger" value="x" onclick="deleteRow(this)" />')
             ).appendTo('#targets')
           });
         }
@@ -643,10 +650,10 @@
             length = datasites.length;
             $.each(data["sites"], function (i, site) {
               removido = true;
-              for (r = 0; r < length; r++){
+              for (r = 0; r < length; r++) {
                 console.log(datasites)
                 console.log(datasites[r])
-                if (datasites[r]['id'] == site.id){
+                if (datasites[r]['id'] == site.id) {
                   removido = false;
                   break;
                 }
@@ -658,8 +665,8 @@
             length = dataprodutos.length;
             $.each(data["produtos"], function (i, produto) {
               removido = true;
-              for (r = 0; r < length; r++){
-                if (dataprodutos[r]['id'] == produto.id){
+              for (r = 0; r < length; r++) {
+                if (dataprodutos[r]['id'] == produto.id) {
                   removido = false;
                   break;
                 }
