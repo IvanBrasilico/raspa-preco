@@ -40,7 +40,9 @@ class TestExecutor(unittest.TestCase):
             1.00)
         session.add(produtoencontrado)
         session.commit()
-        TestExecutor.executor = DossieManager(session, dossie=dossie)
+        TestExecutor.executor = DossieManager(
+            session, procedimento=procedimento, dossie=dossie
+        )
 
     def tearDown(self):
         Base.metadata.drop_all(engine)

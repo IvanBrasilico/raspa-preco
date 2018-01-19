@@ -25,15 +25,18 @@ if __name__ == '__main__':
     site.params_names = {'descricao': 'SearchText'}
 
     target1 = Target(
-        'preco', 'span', '{"class": "value", "itemprop": "price"}'
+        'preco', 'span', '{"class": "value", "itemprop": "price"}', site=site
     )
-    target2 = Target('unidade', 'span', '{"class": "unit"}')
+    target2 = Target('unidade', 'span', '{"class": "unit"}', site=site)
     target3 = Target(
-        'url', 'span', '{"class": "history-item product "}', getter='href'
+        'url', 'span', '{"class": "history-item product "}',
+        getter='href',
+        site=site
     )
-    target4 = Target('descricao', 'span', '{"class": "history-item product "}')
+    target4 = Target(
+        'descricao', 'span', '{"class": "history-item product "}', site=site
+    )
 
-    site.targets = [target1, target2, target3, target4]
     print(site.targets)
     session.merge(site)
     session.commit()
