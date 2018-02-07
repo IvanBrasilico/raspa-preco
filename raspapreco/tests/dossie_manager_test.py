@@ -12,11 +12,13 @@ Base.metadata.create_all(engine)
 
 
 class TestExecutor(unittest.TestCase):
+    executor = None
+
     def __init__(self, *args, **kwargs):
         self.executor = None
         unittest.TestCase.__init__(self, *args, **kwargs)
 
-    def set_up(self):
+    def setUp(self):
         procedimento = Procedimento('teste')
         session.add(procedimento)
         session.commit()
@@ -38,12 +40,11 @@ class TestExecutor(unittest.TestCase):
             1.00)
         session.add(produtoencontrado)
         session.commit()
-        self.executor = DossieManager(session, dossie=dossie)
+        TestExecutor.executor = DossieManager(session, dossie=dossie)
 
-    def tear_down(self):
+    def tearDown(self):
         Base.metadata.drop_all(engine)
 
     def test_executor(self):
-        self.set_up()
-        html = self.executor.dossie_to_html_table()
+        html = TestExecutor.executor.dossie_to_html_table()
         assert html is not None

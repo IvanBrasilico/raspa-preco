@@ -94,7 +94,14 @@ class DossieManager():
                 descricao_site = ''
                 url = ''
                 preco = None
-                for ind in range(len(listas[campos[0]]) - 1):
+                # TODO: fazer um alerta, pois se está retornando número de
+                # linhas diferentes em campos raspagem foi inconsistente
+                # por algum motivo
+                minor_length = 9999999
+                for key in campos:
+                    if len(listas[key]) < minor_length:
+                        minor_length = len(listas[key])
+                for ind in range(minor_length - 1):
                     if descricoes:
                         descricao_site = descricoes[ind]
                     if urls:
@@ -111,7 +118,10 @@ class DossieManager():
                     )
                     camposencontrados = {}
                     for campo in campos:
-                        camposencontrados[campo] = listas[campo][ind]
+                        listavaloresdocampo = listas.get(campo)
+                        if listavaloresdocampo and \
+                                ind < len(listavaloresdocampo):
+                            camposencontrados[campo] = listavaloresdocampo[ind]
                     produtoencontrado.campos = camposencontrados
                     session.add(produtoencontrado)
         session.commit()
@@ -121,6 +131,8 @@ class DossieManager():
         """Dado um dossiê, retorna seus dados formatados
         Se dossie não fornecido ou vazio, retorna None
         """
+        # TODO: Separar tabela por site agora que sites são "dinâmicos",
+        # isto é, podem ter campos diferentes.
         result = None
         if self._dossie and self._dossie.produtos_encontrados:
             result = OrderedDict()

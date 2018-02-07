@@ -27,6 +27,7 @@ setup(
         'Flask-JWT',
         'flask_restless',
         'flask_sqlalchemy',
+        'gunicorn',
         'idna',
         'json-tricks',
         'requests',

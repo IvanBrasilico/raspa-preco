@@ -108,3 +108,7 @@ settings.py
 _build
 
 \.vscode/launch\.json
+
+*.db-journal
+
+\.idea/
