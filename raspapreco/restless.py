@@ -61,7 +61,7 @@ def raspac(self, dossie_id, refazer=False):
                 produtos_scrapy[site.id] = scrap_one(site, produto)
                 cont += 1
             scraped[produto.id] = produtos_scrapy
-            time.sleep(0.2)  # Prevent site blocking
+            time.sleep(0.2)  # Prevent beeing blocked by remote site
         dossiemanager = DossieManager(session, proc, dossie)
         dossiemanager.scraped = scraped
         dossiemanager.monta_dossie()
