@@ -47,7 +47,7 @@ SQLAlchemy==1.1.14
 stevedore==1.27.1
 tornado==4.5.2
 traitlets==4.3.2
-urllib3==1.22
+urllib3==1.26.5
 vine==1.1.4
 wcwidth==0.1.7
 Werkzeug==0.12.2
